@@ -1,4 +1,4 @@
-package com.home.eschool.models;
+package com.home.eschool.models.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ClassesDto {
+public class SubjectsDto {
 
     private UUID id;
     @NotNull

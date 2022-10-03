@@ -37,7 +37,7 @@ public class UserService {
      */
     public void createDefaultUser(List<Roles> roles, List<States> states) {
 
-        Roles role = roles.stream().filter(e -> e.getLabel().equals(RoleEnum.ADMIN))
+        Roles role = roles.stream().filter(e -> e.getLabel().equals(RoleEnum.ROLE_ADMIN))
                 .findFirst().orElse(null);
 
         States state = states.stream().filter(e -> e.getLabel().equals(StateEnum.ACTIVE))

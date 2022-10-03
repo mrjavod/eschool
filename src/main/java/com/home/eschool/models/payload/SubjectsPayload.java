@@ -1,16 +1,18 @@
-package com.home.eschool.models;
+package com.home.eschool.models.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginDto {
+public class SubjectsPayload {
 
-    private String username;
-    private String password;
+    private UUID id;
+    private String name;
 }

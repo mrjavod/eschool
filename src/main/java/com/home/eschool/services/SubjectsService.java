@@ -1,10 +1,10 @@
 package com.home.eschool.services;
 
-import com.home.eschool.entity.Classes;
 import com.home.eschool.entity.Languages;
-import com.home.eschool.models.dto.ClassesDto;
-import com.home.eschool.models.payload.ClassesPayload;
-import com.home.eschool.repository.ClassesRepo;
+import com.home.eschool.entity.Subjects;
+import com.home.eschool.models.payload.SubjectsPayload;
+import com.home.eschool.models.dto.SubjectsDto;
+import com.home.eschool.repository.SubjectsRepo;
 import com.home.eschool.utils.Settings;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,94 +18,92 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class ClassesService {
+public class SubjectsService {
 
-    private final ClassesRepo classesRepo;
+    private final SubjectsRepo subjectsRepo;
     private final LanguageService languageService;
 
-    public ClassesService(ClassesRepo classesRepo,
-                          LanguageService languageService) {
-        this.classesRepo = classesRepo;
+    public SubjectsService(SubjectsRepo subjectsRepo,
+                           LanguageService languageService) {
+        this.subjectsRepo = subjectsRepo;
         this.languageService = languageService;
     }
 
-    public void create(List<ClassesDto> classes) {
-        List<Classes> list = new ArrayList<>();
+    public void create(List<SubjectsDto> subjects) {
+        List<Subjects> list = new ArrayList<>();
         Languages language = languageService.getLanguageByLabel(Settings.getLang());
 
-        for (ClassesDto aClass : classes) {
-            Classes newClass = new Classes();
+        for (SubjectsDto subjectsDto : subjects) {
+            Subjects newClass = new Subjects();
 
             newClass.setId(UUID.randomUUID());
             newClass.setCrateDate(Timestamp.valueOf(LocalDateTime.now()));
             newClass.setCreateUser(Settings.getCurrentUser());
             newClass.setLang(language);
-            newClass.setName(aClass.getName());
+            newClass.setName(subjectsDto.getName());
             list.add(newClass);
         }
 
-        classesRepo.saveAll(list);
+        subjectsRepo.saveAll(list);
     }
 
-    public void update(List<ClassesDto> classes) {
+    public void update(List<SubjectsDto> subjects) {
+        List<Subjects> list = new ArrayList<>();
 
-        List<Classes> list = new ArrayList<>();
-
-        for (ClassesDto aClass : classes) {
-            Classes newClass = classesRepo.findById(aClass.getId()).orElse(null);
+        for (SubjectsDto subjectsDto : subjects) {
+            Subjects newClass = subjectsRepo.findById(subjectsDto.getId()).orElse(null);
             if (newClass == null) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
             }
             newClass.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
             newClass.setChangeUser(Settings.getCurrentUser());
-            newClass.setName(aClass.getName());
+            newClass.setName(subjectsDto.getName());
             list.add(newClass);
         }
 
-        classesRepo.saveAll(list);
+        subjectsRepo.saveAll(list);
     }
 
-    public void updateOnlyOne(ClassesDto classes) {
-        Classes oldSubject = classesRepo.findById(classes.getId()).orElse(null);
+    public void updateOnlyOne(SubjectsDto subject) {
+        Subjects oldSubject = subjectsRepo.findById(subject.getId()).orElse(null);
         if (oldSubject == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
         }
-        oldSubject.setName(classes.getName());
+        oldSubject.setName(subject.getName());
         oldSubject.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
         oldSubject.setChangeUser(Settings.getCurrentUser());
 
-        classesRepo.save(oldSubject);
+        subjectsRepo.save(oldSubject);
     }
 
-    public List<ClassesPayload> getAll() {
-        List<ClassesPayload> list = new ArrayList<>();
-        classesRepo.findAll().forEach(c -> list.add(new ClassesPayload(c.getId(), c.getName())));
+    public List<SubjectsPayload> getAll() {
+        List<SubjectsPayload> list = new ArrayList<>();
+        subjectsRepo.findAll().forEach(s -> list.add(new SubjectsPayload(s.getId(), s.getName())));
         return list;
     }
 
-    public ClassesPayload getById(UUID id) {
-        Classes subjects = classesRepo.findById(id).orElse(null);
+    public SubjectsPayload getById(UUID id) {
+        Subjects subjects = subjectsRepo.findById(id).orElse(null);
 
         if (subjects == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
         }
 
-        return new ClassesPayload(subjects.getId(), subjects.getName());
+        return new SubjectsPayload(subjects.getId(), subjects.getName());
     }
 
-    public void delete(List<UUID> classes) {
-        classes.forEach(s -> {
-            Optional<Classes> optional = classesRepo.findById(s);
+    public void delete(List<UUID> subjects) {
+        subjects.forEach(s -> {
+            Optional<Subjects> optional = subjectsRepo.findById(s);
             if (optional.isPresent()) {
-                classesRepo.deleteById(s);
+                subjectsRepo.deleteById(s);
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
             }
         });
     }
-
 }

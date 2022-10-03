@@ -20,8 +20,8 @@ public class RoleService {
 
     public List<Roles> generateRoles() {
         List<Roles> list = new ArrayList<>();
-        list.add(new Roles(UUID.randomUUID(), "Administrator", RoleEnum.ADMIN));
-        list.add(new Roles(UUID.randomUUID(), "Teacher", RoleEnum.TEACHER));
+        list.add(new Roles(UUID.randomUUID(), "Administrator", RoleEnum.ROLE_ADMIN));
+        list.add(new Roles(UUID.randomUUID(), "Teacher", RoleEnum.ROLE_TEACHER));
 
         return roleRepo.saveAll(list);
     }

@@ -1,4 +1,4 @@
-package com.home.eschool.models;
+package com.home.eschool.models.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

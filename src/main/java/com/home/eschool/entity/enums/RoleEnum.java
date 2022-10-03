@@ -2,6 +2,6 @@ package com.home.eschool.entity.enums;
 
 
 public enum RoleEnum {
-    ADMIN,
-    TEACHER
+    ROLE_ADMIN,
+    ROLE_TEACHER
 }

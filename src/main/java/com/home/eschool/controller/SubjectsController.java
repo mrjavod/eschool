@@ -1,8 +1,8 @@
 package com.home.eschool.controller;
 
-import com.home.eschool.models.dto.ClassesDto;
-import com.home.eschool.models.payload.ClassesPayload;
-import com.home.eschool.services.ClassesService;
+import com.home.eschool.models.payload.SubjectsPayload;
+import com.home.eschool.models.dto.SubjectsDto;
+import com.home.eschool.services.SubjectsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,54 +13,53 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/classes")
-@Tag(name = "Classes", description = "Sinflar bo'yicha CRUD")
-public class ClassesController {
+@RequestMapping("/api/v1/subjects")
+@Tag(name = "Subjects", description = "Fanlar bo'yicha CRUD")
+public class SubjectsController {
 
-    private final ClassesService classesService;
+    private final SubjectsService subjectsService;
 
-    public ClassesController(ClassesService classesService) {
-        this.classesService = classesService;
+    public SubjectsController(SubjectsService subjectsService) {
+        this.subjectsService = subjectsService;
     }
 
     @GetMapping("/")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public List<ClassesPayload> getAll() {
-        return classesService.getAll();
+    public List<SubjectsPayload> getAll() {
+        return subjectsService.getAll();
     }
 
     @GetMapping("/getById/{id}")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public ClassesPayload getById(@PathVariable("id") UUID id) {
-        return classesService.getById(id);
+    public SubjectsPayload getById(@PathVariable("id") UUID id) {
+        return subjectsService.getById(id);
     }
 
     @PostMapping("/create")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void create(@RequestBody List<ClassesDto> classes) {
-        classesService.create(classes);
+    public void create(@RequestBody List<SubjectsDto> subjects) {
+        subjectsService.create(subjects);
     }
 
     @PostMapping("/update")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void update(@RequestBody List<ClassesDto> classes) {
-        classesService.update(classes);
+    public void update(@RequestBody List<SubjectsDto> subjects) {
+        subjectsService.update(subjects);
     }
 
     @PostMapping("/updateOnlyOne")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void updateOnlyOne(@RequestBody ClassesDto classes) {
-        classesService.updateOnlyOne(classes);
+    public void updateOnlyOne(@RequestBody SubjectsDto subject) {
+        subjectsService.updateOnlyOne(subject);
     }
 
     @PostMapping("/delete")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void delete(@RequestBody List<UUID> classes) {
-        classesService.delete(classes);
+    public void delete(@RequestBody List<UUID> subjects) {
+        subjectsService.delete(subjects);
     }
-
 }

@@ -1,9 +1,9 @@
 package com.home.eschool.controller;
 
 import com.home.eschool.entity.Users;
-import com.home.eschool.models.LoginDto;
-import com.home.eschool.models.LoginPayload;
-import com.home.eschool.models.UserPayload;
+import com.home.eschool.models.dto.LoginDto;
+import com.home.eschool.models.payload.LoginPayload;
+import com.home.eschool.models.payload.UserPayload;
 import com.home.eschool.security.jwt.JwtTokenProvider;
 import com.home.eschool.services.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;

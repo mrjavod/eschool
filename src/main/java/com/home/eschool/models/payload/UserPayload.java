@@ -1,4 +1,4 @@
-package com.home.eschool.models;
+package com.home.eschool.models.payload;
 
 import com.home.eschool.entity.enums.RoleEnum;
 import lombok.AllArgsConstructor;

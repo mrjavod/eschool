@@ -1,3 +1,7 @@
-# Integration NPC API
+# E-SCHOOL API
 
-Api для клиентов НКТ
+Language: Java (1.8)
+
+Framework: Spring (2.5.5)
+
+Database: Postgres
