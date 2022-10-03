@@ -37,7 +37,7 @@ public class ClassesService {
             Classes newClass = new Classes();
 
             newClass.setId(UUID.randomUUID());
-            newClass.setCrateDate(Timestamp.valueOf(LocalDateTime.now()));
+            newClass.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
             newClass.setCreateUser(Settings.getCurrentUser());
             newClass.setLang(language);
             newClass.setName(aClass.getName());

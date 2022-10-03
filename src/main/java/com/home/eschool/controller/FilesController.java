@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -27,9 +28,9 @@ public class FilesController {
         this.filesService = filesService;
     }
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = "multipart/form-data")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public FilesPayload upload(@RequestParam("file") MultipartFile file) {
+    public FilesPayload upload(@RequestParam("file") MultipartFile file) throws IOException {
 
         if (!filesService.isAvailableTypes(file.getContentType())) {
             throw new ResponseStatusException(
@@ -41,7 +42,7 @@ public class FilesController {
 
     @GetMapping("/download/{file_id}")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public ResponseEntity downloadFile(@PathVariable("file_id") UUID fileId) {
+    public ResponseEntity download(@PathVariable("file_id") UUID fileId) {
 
         Files file = filesService.getFileById(fileId);
 

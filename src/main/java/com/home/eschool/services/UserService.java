@@ -2,6 +2,7 @@ package com.home.eschool.services;
 
 import com.home.eschool.entity.Roles;
 import com.home.eschool.entity.States;
+import com.home.eschool.entity.Teachers;
 import com.home.eschool.entity.Users;
 import com.home.eschool.entity.enums.RoleEnum;
 import com.home.eschool.entity.enums.StateEnum;
@@ -51,7 +52,7 @@ public class UserService {
         user.setRole(role);
         user.setCreateUser(null);
         user.setChangeUser(null);
-        user.setCrateDate(Timestamp.valueOf(LocalDateTime.now()));
+        user.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
         user.setState(state);
 
         this.userRepo.save(user);
@@ -72,7 +73,7 @@ public class UserService {
      */
     public Users createUser(Users newUser) {
         newUser.setId(UUID.randomUUID());
-        newUser.setCrateDate(Timestamp.valueOf(LocalDateTime.now()));
+        newUser.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
         newUser.setRole(roleService.getRoleByLabel(newUser.getRole().getLabel()));
         newUser.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
         newUser.setCreateUser(Settings.getCurrentUser());
@@ -112,5 +113,36 @@ public class UserService {
         Optional<Users> users = userRepo.findByLoginAndStateLabel(login, StateEnum.ACTIVE);
 
         return users.orElse(null);
+    }
+
+    Users createProfile(Teachers teachers) {
+
+        Users user = new Users();
+        user.setId(UUID.randomUUID());
+        user.setLogin(teachers.getEmail());
+        user.setPassword(new BCryptPasswordEncoder().encode("Teacher123"));
+        user.setFullName(String.format("%s %s %s",
+                teachers.getLastName(),
+                teachers.getFirstName(),
+                teachers.getSureName()));
+        user.setRole(roleService.getRoleByLabel(RoleEnum.ROLE_TEACHER));
+        user.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
+        user.setCreateUser(Settings.getCurrentUser());
+        user.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+
+        return userRepo.save(user);
+    }
+
+    void updateProfile(Teachers teachers) {
+
+        Users user = teachers.getProfile();
+        user.setLogin(teachers.getEmail());
+        user.setFullName(String.format("%s %s %s",
+                teachers.getLastName(),
+                teachers.getFirstName(),
+                teachers.getSureName()));
+        user.setChangeUser(Settings.getCurrentUser());
+        user.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+        userRepo.save(user);
     }
 }

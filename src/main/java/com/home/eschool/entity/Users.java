@@ -22,6 +22,6 @@ public class Users extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Roles role;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private States state;
 }

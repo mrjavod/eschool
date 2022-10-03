@@ -17,7 +17,7 @@ class BaseEntity {
 
     @Id
     private UUID id;
-    private Timestamp crateDate;
+    private Timestamp createDate;
     private Timestamp changeDate;
 
     @OneToOne(cascade = CascadeType.ALL)

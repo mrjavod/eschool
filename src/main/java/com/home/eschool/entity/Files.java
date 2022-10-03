@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
@@ -14,6 +15,7 @@ import javax.persistence.Entity;
 @NoArgsConstructor
 public class Files extends BaseEntity {
 
+    @Column(columnDefinition = "blob")
     private byte[] content;
     private String name;
     private String mimeType;
