@@ -42,6 +42,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             ex.printStackTrace();
         }
 
+        servletResponse.setHeader("Access-Control-Allow-Origin", "*");
+        servletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
+        servletResponse.setHeader("Access-Control-Allow-Headers", "*");
+        servletResponse.setHeader("Access-Control-Allow-Credentials", "true");
+
         filterChain.doFilter(servletRequest, servletResponse);
     }
 }
