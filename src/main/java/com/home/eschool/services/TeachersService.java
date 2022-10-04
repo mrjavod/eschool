@@ -2,12 +2,17 @@ package com.home.eschool.services;
 
 import com.home.eschool.entity.Teachers;
 import com.home.eschool.models.dto.TeachersDto;
+import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.TeachersPayload;
 import com.home.eschool.models.payload.TeachersPayloadDetails;
 import com.home.eschool.repository.TeachersRepo;
 import com.home.eschool.utils.Settings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
@@ -24,13 +29,17 @@ public class TeachersService {
 
     private final TeachersRepo teachersRepo;
     private final UserService userService;
+    private final FilesService filesService;
 
     public TeachersService(TeachersRepo teachersRepo,
-                           UserService userService) {
+                           UserService userService,
+                           FilesService filesService) {
         this.teachersRepo = teachersRepo;
         this.userService = userService;
+        this.filesService = filesService;
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void create(TeachersDto teacher) {
         Teachers teachers = new Teachers();
         teachers.setId(UUID.randomUUID());
@@ -55,9 +64,9 @@ public class TeachersService {
         teachersRepo.save(teachers);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void update(TeachersDto teacher) {
         Teachers teachers = teachersRepo.findById(teacher.getId()).orElse(null);
-
         if (teachers == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
@@ -84,26 +93,57 @@ public class TeachersService {
         teachersRepo.save(teachers);
     }
 
-    public List<TeachersPayload> getAll() {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy/mm/dd");
+    public PageablePayload getAll(int page, String search) {
 
+        int size = 10;
         List<TeachersPayload> list = new ArrayList<>();
-        teachersRepo.findAll().forEach(t -> {
-            list.add(
-                    new TeachersPayload(
-                            t.getId(),
-                            t.getFirstName(),
-                            t.getLastName(),
-                            t.getSureName(),
-                            simpleDateFormat.format(t.getDateOfBirth()),
-                            t.getPhoneNumber(),
-                            t.getEmail()));
-        });
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        return list;
+        Page<Teachers> teachers = teachersRepo.findAllByFirstNameContains(
+                PageRequest.of(page, size, Sort.by("lastName")), search);
+
+        teachers.forEach(t -> list.add(
+                new TeachersPayload(
+                        t.getId(),
+                        t.getFirstName(),
+                        t.getLastName(),
+                        t.getSureName(),
+                        simpleDateFormat.format(t.getDateOfBirth()),
+                        t.getPhoneNumber(),
+                        t.getEmail())));
+
+        return new PageablePayload(
+                teachers.getTotalPages(),
+                teachers.getTotalElements(),
+                teachers.getSize(),
+                list);
     }
 
     public TeachersPayloadDetails getById(UUID id) {
-        return null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        Teachers teacher = teachersRepo.findById(id).orElse(null);
+        if (teacher == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
+        }
+
+        return new TeachersPayloadDetails(
+                teacher.getId(),
+                teacher.getFirstName(),
+                teacher.getLastName(),
+                teacher.getSureName(),
+                simpleDateFormat.format(teacher.getDateOfBirth()),
+                teacher.getPhoneNumber(),
+                teacher.getEmail(),
+                teacher.getInn(),
+                teacher.getInps(),
+                teacher.getPassportSeries(),
+                teacher.getPassportNumber(),
+                teacher.getAddress(),
+                filesService.getFileInfo(teacher.getDiploma_id()),
+                filesService.getFileInfo(teacher.getPassport_id()),
+                filesService.getFileInfo(teacher.getAvatar_id())
+        );
     }
 }

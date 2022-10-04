@@ -58,4 +58,16 @@ public class FilesService {
 
         return files;
     }
+
+    public FilesPayload getFileInfo(UUID id) {
+        Files files = filesRepo.findById(id).orElse(null);
+        if (files == null) {
+            return null;
+        }
+        return new FilesPayload(files.getId(), files.getName(),
+                String.format("/download/%s", files.getId()),
+                String.format("data:%s;base64,%s", files.getMimeType(),
+                        Base64.getEncoder().encodeToString(files.getContent()))
+        );
+    }
 }

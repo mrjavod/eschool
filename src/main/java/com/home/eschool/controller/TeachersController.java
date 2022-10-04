@@ -1,7 +1,7 @@
 package com.home.eschool.controller;
 
 import com.home.eschool.models.dto.TeachersDto;
-import com.home.eschool.models.payload.TeachersPayload;
+import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.TeachersPayloadDetails;
 import com.home.eschool.services.TeachersService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -27,8 +26,9 @@ public class TeachersController {
 
     @GetMapping("/")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public List<TeachersPayload> getAll() {
-        return teachersService.getAll();
+    public PageablePayload getAll(@RequestParam(required = false, name = "page", defaultValue = "0") int page,
+                                  @RequestParam(required = false, name = "search", defaultValue = "") String search) {
+        return teachersService.getAll(page, search);
     }
 
     @GetMapping("/getById/{id}")

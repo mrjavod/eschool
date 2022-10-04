@@ -35,7 +35,7 @@ public class TeachersDto {
     private String passportSeries;
     private String passportNumber;
 
-    @Schema(description = "Tug'ilgan sana: format(yyyy/mm/dd)", example = "1995/09/30")
+    @Schema(description = "Tug'ilgan sana: format(yyyy-mm-dd)", example = "1995-09-30")
     private String dateOfBirth;
 
     private String phoneNumber;
@@ -43,5 +43,6 @@ public class TeachersDto {
 
     @NotNull
     @Email
+    @Schema(example = "test@test.com")
     private String email;
 }
