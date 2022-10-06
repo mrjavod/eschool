@@ -46,6 +46,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         servletResponse.setHeader("Access-Control-Allow-Methods", "GET,POST,DELETE,PUT,OPTIONS");
         servletResponse.setHeader("Access-Control-Allow-Headers", "*");
         servletResponse.setHeader("Access-Control-Allow-Credentials", "true");
+        servletResponse.setHeader("Access-Control-Max-Age", "3600");
 
         filterChain.doFilter(servletRequest, servletResponse);
     }
