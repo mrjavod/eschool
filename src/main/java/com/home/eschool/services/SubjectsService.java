@@ -2,10 +2,15 @@ package com.home.eschool.services;
 
 import com.home.eschool.entity.Languages;
 import com.home.eschool.entity.Subjects;
+import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.SubjectsPayload;
 import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.repository.SubjectsRepo;
+import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,7 +23,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class SubjectsService {
+public class SubjectsService implements CrudInterface<List<SubjectsDto>, SubjectsPayload> {
 
     private final SubjectsRepo subjectsRepo;
     private final LanguageService languageService;
@@ -29,6 +34,7 @@ public class SubjectsService {
         this.languageService = languageService;
     }
 
+    @Override
     public void create(List<SubjectsDto> subjects) {
         List<Subjects> list = new ArrayList<>();
         Languages language = languageService.getLanguageByLabel(Settings.getLang());
@@ -47,6 +53,7 @@ public class SubjectsService {
         subjectsRepo.saveAll(list);
     }
 
+    @Override
     public void update(List<SubjectsDto> subjects) {
         List<Subjects> list = new ArrayList<>();
 
@@ -78,12 +85,27 @@ public class SubjectsService {
         subjectsRepo.save(oldSubject);
     }
 
-    public List<SubjectsPayload> getAll() {
+    @Override
+    public PageablePayload getAll(int page, String search) {
+        int size = 10;
         List<SubjectsPayload> list = new ArrayList<>();
-        subjectsRepo.findAll().forEach(s -> list.add(new SubjectsPayload(s.getId(), s.getName())));
-        return list;
+
+        Page<Subjects> subjectsPage = subjectsRepo.findAllByNameContains(
+                PageRequest.of(page, size, Sort.by("lastName")), search);
+
+        subjectsPage.forEach(t -> list.add(
+                new SubjectsPayload(
+                        t.getId(),
+                        t.getName())));
+
+        return new PageablePayload(
+                subjectsPage.getTotalPages(),
+                subjectsPage.getTotalElements(),
+                subjectsPage.getSize(),
+                list);
     }
 
+    @Override
     public SubjectsPayload getById(UUID id) {
         Subjects subjects = subjectsRepo.findById(id).orElse(null);
 
@@ -95,6 +117,7 @@ public class SubjectsService {
         return new SubjectsPayload(subjects.getId(), subjects.getName());
     }
 
+    @Override
     public void delete(List<UUID> subjects) {
         subjects.forEach(s -> {
             Optional<Subjects> optional = subjectsRepo.findById(s);

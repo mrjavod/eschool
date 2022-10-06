@@ -10,6 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -40,14 +42,22 @@ public class TeachersController {
     @PostMapping("/create")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void create(@RequestBody TeachersDto teacher) {
+    public void create(@Valid @RequestBody TeachersDto teacher) {
         teachersService.create(teacher);
     }
 
     @PostMapping("/update")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public void update(@RequestBody TeachersDto teacher) {
+    public void update(@Valid @RequestBody TeachersDto teacher) {
         teachersService.update(teacher);
     }
+
+    @PostMapping("/delete")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @Secured("ROLE_ADMIN")
+    public void delete(@RequestBody List<UUID> teachers) {
+        teachersService.delete(teachers);
+    }
+
 
 }

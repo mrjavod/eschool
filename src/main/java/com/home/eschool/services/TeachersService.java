@@ -6,6 +6,7 @@ import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.TeachersPayload;
 import com.home.eschool.models.payload.TeachersPayloadDetails;
 import com.home.eschool.repository.TeachersRepo;
+import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,11 +22,12 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
 @Service
-public class TeachersService {
+public class TeachersService implements CrudInterface<TeachersDto, TeachersPayload> {
 
     private final TeachersRepo teachersRepo;
     private final UserService userService;
@@ -39,6 +41,7 @@ public class TeachersService {
         this.filesService = filesService;
     }
 
+    @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(TeachersDto teacher) {
         Teachers teachers = new Teachers();
@@ -64,6 +67,7 @@ public class TeachersService {
         teachersRepo.save(teachers);
     }
 
+    @Override
     @Transactional(rollbackFor = Throwable.class)
     public void update(TeachersDto teacher) {
         Teachers teachers = teachersRepo.findById(teacher.getId()).orElse(null);
@@ -93,6 +97,7 @@ public class TeachersService {
         teachersRepo.save(teachers);
     }
 
+    @Override
     public PageablePayload getAll(int page, String search) {
 
         int size = 10;
@@ -119,6 +124,7 @@ public class TeachersService {
                 list);
     }
 
+    @Override
     public TeachersPayloadDetails getById(UUID id) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -145,5 +151,20 @@ public class TeachersService {
                 filesService.getFileInfo(teacher.getPassport_id()),
                 filesService.getFileInfo(teacher.getAvatar_id())
         );
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public void delete(List<UUID> teachers) {
+        teachers.forEach(s -> {
+            Optional<Teachers> optional = teachersRepo.findById(s);
+            if (optional.isPresent()) {
+                teachersRepo.deleteById(s);
+                userService.deleteUser(optional.get().getProfile());
+            } else {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+            }
+        });
     }
 }

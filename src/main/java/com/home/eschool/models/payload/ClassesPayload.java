@@ -15,6 +15,5 @@ import java.util.UUID;
 public class ClassesPayload {
 
     private UUID id;
-    @NotNull
     private String name;
 }

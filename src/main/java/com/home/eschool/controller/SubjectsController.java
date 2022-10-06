@@ -1,5 +1,6 @@
 package com.home.eschool.controller;
 
+import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.SubjectsPayload;
 import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.services.SubjectsService;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,8 +27,9 @@ public class SubjectsController {
 
     @GetMapping("/")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public List<SubjectsPayload> getAll() {
-        return subjectsService.getAll();
+    public PageablePayload getAll(@RequestParam(required = false, name = "page", defaultValue = "0") int page,
+                                  @RequestParam(required = false, name = "search", defaultValue = "") String search) {
+        return subjectsService.getAll(page, search);
     }
 
     @GetMapping("/getById/{id}")
@@ -38,21 +41,21 @@ public class SubjectsController {
     @PostMapping("/create")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void create(@RequestBody List<SubjectsDto> subjects) {
+    public void create(@Valid @RequestBody List<SubjectsDto> subjects) {
         subjectsService.create(subjects);
     }
 
     @PostMapping("/update")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void update(@RequestBody List<SubjectsDto> subjects) {
+    public void update(@Valid @RequestBody List<SubjectsDto> subjects) {
         subjectsService.update(subjects);
     }
 
     @PostMapping("/updateOnlyOne")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @Secured("ROLE_ADMIN")
-    public void updateOnlyOne(@RequestBody SubjectsDto subject) {
+    public void updateOnlyOne(@Valid @RequestBody SubjectsDto subject) {
         subjectsService.updateOnlyOne(subject);
     }
 

@@ -15,6 +15,7 @@ import java.util.UUID;
 public class ClassesDto {
 
     private UUID id;
-    @NotNull
+
+    @NotNull(message = "Name is mandatory")
     private String name;
 }

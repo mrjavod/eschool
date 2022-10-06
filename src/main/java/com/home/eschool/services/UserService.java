@@ -59,52 +59,6 @@ public class UserService {
     }
 
     /**
-     * @return List
-     */
-    public List<Users> getUsersList() {
-        return userRepo.findAll();
-    }
-
-    /**
-     * Bu method faqat ADMIN va MANAGER uchun
-     *
-     * @param newUser Users
-     * @return Users
-     */
-    public Users createUser(Users newUser) {
-        newUser.setId(UUID.randomUUID());
-        newUser.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
-        newUser.setRole(roleService.getRoleByLabel(newUser.getRole().getLabel()));
-        newUser.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
-        newUser.setCreateUser(Settings.getCurrentUser());
-
-        return userRepo.save(newUser);
-    }
-
-    /**
-     * Bu method faqat ADMIN uchun
-     *
-     * @param ids Users uuid
-     */
-    public void deleteUsers(List<UUID> ids) {
-
-        for (UUID id : ids) {
-
-            // o'zini o'zi o'chirishi mumkin emas, keyinchalik tekshirish kerak
-
-            Users user = userRepo.findByIdAndStateLabel(id, StateEnum.ACTIVE).orElse(null);
-
-            if (user != null) {
-                user.setState(stateService.getStateByLabel(StateEnum.DELETED));
-                user.setChangeUser(Settings.getCurrentUser());
-                user.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
-
-                userRepo.save(user);
-            }
-        }
-    }
-
-    /**
      * @param login String
      * @return Users
      */
@@ -115,6 +69,10 @@ public class UserService {
         return users.orElse(null);
     }
 
+    /**
+     * @param teachers Teachers
+     * @return Users
+     */
     Users createProfile(Teachers teachers) {
 
         Users user = new Users();
@@ -133,6 +91,9 @@ public class UserService {
         return userRepo.save(user);
     }
 
+    /**
+     * @param teachers Teachers
+     */
     void updateProfile(Teachers teachers) {
 
         Users user = teachers.getProfile();
@@ -144,5 +105,12 @@ public class UserService {
         user.setChangeUser(Settings.getCurrentUser());
         user.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
         userRepo.save(user);
+    }
+
+    /**
+     * @param profile Users
+     */
+    void deleteUser(Users profile) {
+        userRepo.delete(profile);
     }
 }
