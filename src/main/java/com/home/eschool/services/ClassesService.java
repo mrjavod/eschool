@@ -131,4 +131,8 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         });
     }
 
+    public Classes findById(UUID id) {
+        return classesRepo.findById(id).orElse(null);
+    }
+
 }

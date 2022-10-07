@@ -1,12 +1,8 @@
 package com.home.eschool.config;
 
-import com.home.eschool.entity.Languages;
 import com.home.eschool.entity.Roles;
 import com.home.eschool.entity.States;
-import com.home.eschool.services.LanguageService;
-import com.home.eschool.services.RoleService;
-import com.home.eschool.services.StateService;
-import com.home.eschool.services.UserService;
+import com.home.eschool.services.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -20,15 +16,18 @@ public class DataLoader implements CommandLineRunner {
     private final RoleService roleService;
     private final StateService stateService;
     private final LanguageService languageService;
+    private final AppSettingsService appSettingsService;
 
     public DataLoader(UserService userService,
                       RoleService roleService,
                       StateService stateService,
-                      LanguageService languageService) {
+                      LanguageService languageService,
+                      AppSettingsService appSettingsService) {
         this.userService = userService;
         this.roleService = roleService;
         this.stateService = stateService;
         this.languageService = languageService;
+        this.appSettingsService = appSettingsService;
     }
 
     @Value("${spring.jpa.hibernate.ddl-auto}")
@@ -43,7 +42,8 @@ public class DataLoader implements CommandLineRunner {
 
         languageService.generateLanguages();
 
-        userService.createDefaultUser(roles, states);
+        appSettingsService.createDefaultSettings();
 
+        userService.createDefaultUser(roles, states);
     }
 }
