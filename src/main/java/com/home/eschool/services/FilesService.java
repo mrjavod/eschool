@@ -60,6 +60,9 @@ public class FilesService {
     }
 
     public FilesPayload getFileInfo(UUID id) {
+        if (id == null) {
+            return null;
+        }
         Files files = filesRepo.findById(id).orElse(null);
         if (files == null) {
             return null;
