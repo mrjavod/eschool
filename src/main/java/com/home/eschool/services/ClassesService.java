@@ -92,7 +92,7 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         List<ClassesPayload> list = new ArrayList<>();
 
         Page<Classes> classesPage = classesRepo.findAllByNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), search);
+                PageRequest.of(page, size, Sort.by("name")), search);
 
         classesPage.forEach(t -> list.add(
                 new ClassesPayload(

@@ -91,7 +91,7 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
         List<SubjectsPayload> list = new ArrayList<>();
 
         Page<Subjects> subjectsPage = subjectsRepo.findAllByNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), search);
+                PageRequest.of(page, size, Sort.by("name")), search);
 
         subjectsPage.forEach(t -> list.add(
                 new SubjectsPayload(
