@@ -36,14 +36,16 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        List<Roles> roles = roleService.generateRoles();
+        if (status.equalsIgnoreCase("create")) {
+            List<Roles> roles = roleService.generateRoles();
 
-        List<States> states = stateService.generateDefaultStates();
+            List<States> states = stateService.generateDefaultStates();
 
-        languageService.generateLanguages();
+            languageService.generateLanguages();
 
-        appSettingsService.createDefaultSettings();
+            appSettingsService.createDefaultSettings();
 
-        userService.createDefaultUser(roles, states);
+            userService.createDefaultUser(roles, states);
+        }
     }
 }

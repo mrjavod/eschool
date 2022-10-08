@@ -7,12 +7,14 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
 
 @Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "files")
 public class Files extends BaseEntity {
 
     @Column(columnDefinition = "blob")
