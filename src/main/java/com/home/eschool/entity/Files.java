@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Table(name = "files")
 public class Files extends BaseEntity {
 
-    @Column(columnDefinition = "blob")
+    @Column(columnDefinition = "bytea")
     private byte[] content;
     private String name;
     private String mimeType;
