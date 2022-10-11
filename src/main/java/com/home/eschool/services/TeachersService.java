@@ -160,7 +160,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
             Optional<Teachers> optional = teachersRepo.findById(s);
             if (optional.isPresent()) {
                 teachersRepo.deleteById(s);
-                userService.deleteUser(optional.get().getProfile());
+                //userService.deleteUser(optional.get().getProfile());
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
