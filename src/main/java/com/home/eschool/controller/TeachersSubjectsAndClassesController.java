@@ -16,7 +16,7 @@ import java.util.UUID;
 
 
 @RestController
-@RequestMapping("/api/v1/teachers")
+@RequestMapping("/api/v1/teachersSubjects")
 @Tag(name = "Teachers Subjects And Classes", description = "Ustozlarning dars beradigan fanlari va sinflari")
 public class TeachersSubjectsAndClassesController {
 
