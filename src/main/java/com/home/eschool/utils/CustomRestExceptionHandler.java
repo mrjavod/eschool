@@ -80,7 +80,7 @@ public class CustomRestExceptionHandler extends ResponseEntityExceptionHandler {
                 apiError, new HttpHeaders(), apiError.getStatus());
     }
 
-    @ExceptionHandler({javax.validation.ConstraintViolationException.class })
+    @ExceptionHandler({javax.validation.ConstraintViolationException.class})
     public ResponseEntity<Object> handleConstraintViolation(
             javax.validation.ConstraintViolationException ex, WebRequest request) {
         List<String> errors = new ArrayList<String>();

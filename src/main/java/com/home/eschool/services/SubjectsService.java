@@ -1,5 +1,6 @@
 package com.home.eschool.services;
 
+import com.home.eschool.entity.Classes;
 import com.home.eschool.entity.Languages;
 import com.home.eschool.entity.Subjects;
 import com.home.eschool.models.payload.PageablePayload;
@@ -128,5 +129,13 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
             }
         });
+    }
+
+    public Subjects findById(UUID subjectId) {
+        if (subjectId == null) {
+            return null;
+        }
+
+        return subjectsRepo.findById(subjectId).orElse(null);
     }
 }

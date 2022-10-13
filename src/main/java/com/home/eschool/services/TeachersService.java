@@ -167,4 +167,12 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
             }
         });
     }
+
+    public Teachers findById(UUID teacherId) {
+        if (teacherId == null) {
+            return null;
+        }
+
+        return teachersRepo.findById(teacherId).orElse(null);
+    }
 }
