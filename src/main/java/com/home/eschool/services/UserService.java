@@ -77,7 +77,7 @@ public class UserService {
 
         Users user = new Users();
         user.setId(UUID.randomUUID());
-        user.setLogin(teachers.getEmail());
+        user.setLogin(teachers.getPhoneNumber());
         user.setPassword(new BCryptPasswordEncoder().encode("Teacher123"));
         user.setFullName(String.format("%s %s %s",
                 teachers.getLastName(),
@@ -97,7 +97,7 @@ public class UserService {
     void updateProfile(Teachers teachers) {
 
         Users user = teachers.getProfile();
-        user.setLogin(teachers.getEmail());
+        user.setLogin(teachers.getPhoneNumber());
         user.setFullName(String.format("%s %s %s",
                 teachers.getLastName(),
                 teachers.getFirstName(),
