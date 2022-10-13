@@ -82,6 +82,19 @@ public class Utils {
         }
     }
 
+    public static <T> T convertToObject(String str, Class<T> tClass) {
+        try {
+            if (str == null)
+                return null;
+
+            return new ObjectMapper().readValue(str, new TypeReference<T>() {
+            });
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static String inputStreamToString(InputStream is) throws IOException {
         StringBuilder sb = new StringBuilder();
         String line;
@@ -101,7 +114,7 @@ public class Utils {
 
     public static Object convertToNumeric(String number) {
 
-        if(number.contains(".")){
+        if (number.contains(".")) {
             return Double.valueOf(number);
         }
 

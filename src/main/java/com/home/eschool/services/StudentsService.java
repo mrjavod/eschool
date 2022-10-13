@@ -1,7 +1,10 @@
 package com.home.eschool.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.home.eschool.entity.Students;
 import com.home.eschool.entity.Teachers;
+import com.home.eschool.entity.addinfo.BirthInfo;
+import com.home.eschool.entity.addinfo.Parents;
 import com.home.eschool.models.dto.StudentsDto;
 import com.home.eschool.models.dto.TeachersDto;
 import com.home.eschool.models.payload.*;
@@ -9,6 +12,7 @@ import com.home.eschool.repository.StudentsRepo;
 import com.home.eschool.repository.TeachersRepo;
 import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
+import com.home.eschool.utils.Utils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,13 +37,16 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     private final StudentsRepo studentsRepo;
     private final FilesService filesService;
     private final StudentClassesService studentClassesService;
+    private final StateService stateService;
 
     public StudentsService(StudentsRepo studentsRepo,
                            FilesService filesService,
-                           StudentClassesService studentClassesService) {
+                           StudentClassesService studentClassesService,
+                           StateService stateService) {
         this.studentsRepo = studentsRepo;
         this.filesService = filesService;
         this.studentClassesService = studentClassesService;
+        this.stateService = stateService;
     }
 
     @Override
@@ -56,6 +63,20 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         students.setDateOfBirth(Date.valueOf(studentsDto.getDateOfBirth()));
         students.setAddress(studentsDto.getAddress());
         students.setPhoneNumber(studentsDto.getPhoneNumber());
+        students.setMonthlyPayment(studentsDto.getMonthlyPayment());
+
+        if (studentsDto.getMother() != null) {
+            students.setMother(Utils.convertToString(studentsDto.getMother()));
+        }
+        if (studentsDto.getFather() != null) {
+            students.setFather(Utils.convertToString(studentsDto.getFather()));
+        }
+        if (studentsDto.getBirthInfo() != null) {
+            students.setBirthInfo(Utils.convertToString(studentsDto.getBirthInfo()));
+        }
+        if (studentsDto.getAdditionalInfo() != null) {
+            students.setAdditionalInfo(Utils.convertToString(studentsDto.getAdditionalInfo()));
+        }
 
         studentsRepo.save(students);
         studentClassesService.create(students, studentsDto.getClassId());
@@ -79,6 +100,20 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         students.setDateOfBirth(Date.valueOf(studentsDto.getDateOfBirth()));
         students.setAddress(studentsDto.getAddress());
         students.setPhoneNumber(studentsDto.getPhoneNumber());
+        students.setMonthlyPayment(studentsDto.getMonthlyPayment());
+
+        if (studentsDto.getMother() != null) {
+            students.setMother(Utils.convertToString(studentsDto.getMother()));
+        }
+        if (studentsDto.getFather() != null) {
+            students.setFather(Utils.convertToString(studentsDto.getFather()));
+        }
+        if (studentsDto.getBirthInfo() != null) {
+            students.setBirthInfo(Utils.convertToString(studentsDto.getBirthInfo()));
+        }
+        if (studentsDto.getAdditionalInfo() != null) {
+            students.setAdditionalInfo(Utils.convertToString(studentsDto.getAdditionalInfo()));
+        }
 
         studentsRepo.save(students);
         studentClassesService.update(students, studentsDto.getClassId());
@@ -129,9 +164,14 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
                 students.getSureName(),
                 simpleDateFormat.format(students.getDateOfBirth()),
                 students.getPhoneNumber(),
+                studentClassesService.getClassesInfo(students),
                 students.getAddress(),
                 filesService.getFileInfo(students.getAvatar_id()),
-                studentClassesService.getClassesInfo(students)
+                Utils.convertToObject(students.getMother(), Parents.class),
+                Utils.convertToObject(students.getFather(), Parents.class),
+                Utils.convertToObject(students.getBirthInfo(), BirthInfo.class),
+                students.getMonthlyPayment(),
+                Utils.convertToObject(students.getAdditionalInfo(), JsonNode.class)
         );
     }
 

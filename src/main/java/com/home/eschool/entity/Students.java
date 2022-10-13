@@ -1,5 +1,8 @@
 package com.home.eschool.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.home.eschool.entity.addinfo.BirthInfo;
+import com.home.eschool.entity.addinfo.Parents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +11,7 @@ import lombok.Setter;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.UUID;
 
@@ -27,6 +31,21 @@ public class Students extends BaseEntity {
     @Column(columnDefinition = "text")
     private String address;
     private UUID avatar_id;
+
+    @Column(columnDefinition = "jsonb")
+    private String mother;
+
+    @Column(columnDefinition = "jsonb")
+    private String father;
+
+    @Column(columnDefinition = "jsonb")
+    private String birthInfo;
+
+    @Column(columnDefinition = "numeric")
+    private BigDecimal monthlyPayment;
+
+    @Column(columnDefinition = "jsonb")
+    private String additionalInfo;
 
     @OneToOne
     private States state;

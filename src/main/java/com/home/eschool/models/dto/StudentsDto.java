@@ -1,5 +1,8 @@
 package com.home.eschool.models.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.home.eschool.entity.addinfo.BirthInfo;
+import com.home.eschool.entity.addinfo.Parents;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,6 +11,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
@@ -41,4 +45,9 @@ public class StudentsDto {
     @Schema(description = "O'qiydigan sinfi", required = true)
     private UUID classId;
 
+    private Parents mother;
+    private Parents father;
+    private BirthInfo birthInfo;
+    private BigDecimal monthlyPayment;
+    private JsonNode additionalInfo;
 }
