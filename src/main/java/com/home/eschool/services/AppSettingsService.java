@@ -2,6 +2,8 @@ package com.home.eschool.services;
 
 import com.home.eschool.entity.AppSettings;
 import com.home.eschool.entity.enums.SetsEnum;
+import com.home.eschool.models.dto.ExportDto;
+import com.home.eschool.models.payload.ExportPayload;
 import com.home.eschool.models.payload.StudyYearsPayload;
 import com.home.eschool.repository.AppSettingsRepo;
 import org.springframework.stereotype.Service;
@@ -66,4 +68,14 @@ public class AppSettingsService {
         appSettingsRepo.save(appSettings);
     }
 
+    public ExportPayload export(ExportDto dto) {
+
+        switch (dto.getObject()) {
+            case "teachers": {
+
+            }
+        }
+
+        return new ExportPayload("", null);
+    }
 }
