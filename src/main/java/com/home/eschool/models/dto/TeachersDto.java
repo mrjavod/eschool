@@ -29,19 +29,24 @@ public class TeachersDto {
 
     private String inn;
     private String inps;
+    private String pnfl;
     private UUID diploma_id;
+    private UUID second_diploma_id;
     private UUID passport_id;
     private UUID avatar_id;
+    private UUID covid_test_id;
+    private UUID reference_086_id;
     private String passportSeries;
     private String passportNumber;
 
     @Schema(description = "Tug'ilgan sana: format(yyyy-mm-dd)", example = "1995-09-30")
     private String dateOfBirth;
 
+    @Schema(required = true)
     private String phoneNumber;
+    private String secondPhoneNumber;
     private String address;
 
-    @NotNull
     @Email
     @Schema(example = "test@test.com")
     private String email;

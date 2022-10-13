@@ -26,23 +26,32 @@ public class Teachers extends BaseEntity {
     private String inn;
 
     private String inps;
+    private String pnfl;
     private UUID diploma_id;
+    private UUID second_diploma_id;
     private UUID passport_id;
     private UUID avatar_id;
+    private UUID covid_test_id;
+    private UUID reference_086_id;
     private String passportSeries;
 
     @Column(unique = true)
     private String passportNumber;
 
     private Date dateOfBirth;
+
+    @Column(unique = true)
     private String phoneNumber;
+    private String secondPhoneNumber;
 
     @Column(columnDefinition = "text")
     private String address;
 
-    @Column(unique = true)
     private String email;
 
     @OneToOne
     private Users profile;
+
+    @OneToOne
+    private States states;
 }

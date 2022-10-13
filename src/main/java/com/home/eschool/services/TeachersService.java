@@ -1,6 +1,8 @@
 package com.home.eschool.services;
 
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.Teachers;
+import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.TeachersDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.TeachersPayload;
@@ -32,13 +34,16 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     private final TeachersRepo teachersRepo;
     private final UserService userService;
     private final FilesService filesService;
+    private final StateService stateService;
 
     public TeachersService(TeachersRepo teachersRepo,
                            UserService userService,
-                           FilesService filesService) {
+                           FilesService filesService,
+                           StateService stateService) {
         this.teachersRepo = teachersRepo;
         this.userService = userService;
         this.filesService = filesService;
+        this.stateService = stateService;
     }
 
     @Override
@@ -63,6 +68,13 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         teachers.setEmail(teacher.getEmail());
         teachers.setPhoneNumber(teacher.getPhoneNumber());
         teachers.setProfile(userService.createProfile(teachers));
+
+        teachers.setSecondPhoneNumber(teacher.getSecondPhoneNumber());
+        teachers.setPnfl(teacher.getPnfl());
+        teachers.setReference_086_id(teacher.getReference_086_id());
+        teachers.setCovid_test_id(teacher.getCovid_test_id());
+        teachers.setSecond_diploma_id(teacher.getSecond_diploma_id());
+        teachers.setStates(stateService.getStateByLabel(StateEnum.ACTIVE));
 
         teachersRepo.save(teachers);
     }
@@ -93,6 +105,12 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         teachers.setEmail(teacher.getEmail());
         teachers.setPhoneNumber(teacher.getPhoneNumber());
 
+        teachers.setSecondPhoneNumber(teacher.getSecondPhoneNumber());
+        teachers.setPnfl(teacher.getPnfl());
+        teachers.setReference_086_id(teacher.getReference_086_id());
+        teachers.setCovid_test_id(teacher.getCovid_test_id());
+        teachers.setSecond_diploma_id(teacher.getSecond_diploma_id());
+
         userService.updateProfile(teachers);
         teachersRepo.save(teachers);
     }
@@ -104,8 +122,8 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         List<TeachersPayload> list = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Page<Teachers> teachers = teachersRepo.findAllByFirstNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), search);
+        Page<Teachers> teachers = teachersRepo.findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label(
+                PageRequest.of(page, size, Sort.by("lastName")), search, search, search, StateEnum.ACTIVE);
 
         teachers.forEach(t -> list.add(
                 new TeachersPayload(
@@ -144,22 +162,31 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
                 teacher.getEmail(),
                 teacher.getInn(),
                 teacher.getInps(),
+                teacher.getPnfl(),
+                teacher.getSecondPhoneNumber(),
                 teacher.getPassportSeries(),
                 teacher.getPassportNumber(),
                 teacher.getAddress(),
                 filesService.getFileInfo(teacher.getDiploma_id()),
+                filesService.getFileInfo(teacher.getSecond_diploma_id()),
                 filesService.getFileInfo(teacher.getPassport_id()),
-                filesService.getFileInfo(teacher.getAvatar_id())
+                filesService.getFileInfo(teacher.getAvatar_id()),
+                filesService.getFileInfo(teacher.getCovid_test_id()),
+                filesService.getFileInfo(teacher.getReference_086_id())
         );
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void delete(List<UUID> teachers) {
+        States states = stateService.getStateByLabel(StateEnum.DELETED);
         teachers.forEach(s -> {
             Optional<Teachers> optional = teachersRepo.findById(s);
             if (optional.isPresent()) {
-                teachersRepo.deleteById(s);
+                Teachers t = optional.get();
+                t.setStates(states);
+
+                teachersRepo.save(t);
                 //userService.deleteUser(optional.get().getProfile());
             } else {
                 throw new ResponseStatusException(
