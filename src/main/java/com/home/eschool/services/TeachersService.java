@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,6 +50,9 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(TeachersDto teacher) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         Teachers teachers = new Teachers();
         teachers.setId(UUID.randomUUID());
         teachers.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -63,7 +67,11 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         teachers.setAvatar_id(teacher.getAvatar_id());
         teachers.setPassportSeries(teacher.getPassportSeries());
         teachers.setPassportNumber(teacher.getPassportNumber());
-        teachers.setDateOfBirth(Date.valueOf(teacher.getDateOfBirth()));
+        try {
+            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teacher.getDateOfBirth()).getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         teachers.setAddress(teacher.getAddress());
         teachers.setEmail(teacher.getEmail());
         teachers.setPhoneNumber(teacher.getPhoneNumber());
@@ -82,6 +90,8 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void update(TeachersDto teacher) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         Teachers teachers = teachersRepo.findById(teacher.getId()).orElse(null);
         if (teachers == null) {
             throw new ResponseStatusException(
@@ -100,7 +110,13 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         teachers.setAvatar_id(teacher.getAvatar_id());
         teachers.setPassportSeries(teacher.getPassportSeries());
         teachers.setPassportNumber(teacher.getPassportNumber());
-        teachers.setDateOfBirth(Date.valueOf(teacher.getDateOfBirth()));
+
+        try {
+            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teacher.getDateOfBirth()).getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         teachers.setAddress(teacher.getAddress());
         teachers.setEmail(teacher.getEmail());
         teachers.setPhoneNumber(teacher.getPhoneNumber());
@@ -120,7 +136,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
 
         int size = 10;
         List<TeachersPayload> list = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
@@ -146,7 +162,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
 
     @Override
     public TeachersPayloadDetails getById(UUID id) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         Teachers teacher = teachersRepo.findById(id).orElse(null);
         if (teacher == null) {
