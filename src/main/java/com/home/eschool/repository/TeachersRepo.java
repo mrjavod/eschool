@@ -12,6 +12,6 @@ import java.util.UUID;
 @Repository
 public interface TeachersRepo extends JpaRepository<Teachers, UUID> {
 
-    Page<Teachers> findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label(
-            Pageable pageable, String firstName, String lastName, String sureName, StateEnum label);
+    Page<Teachers> findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label_Active(
+            Pageable pageable, String firstName, String lastName, String sureName);
 }

@@ -122,8 +122,8 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         List<TeachersPayload> list = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Page<Teachers> teachers = teachersRepo.findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label(
-                PageRequest.of(page, size, Sort.by("lastName")), search, search, search, StateEnum.ACTIVE);
+        Page<Teachers> teachers = teachersRepo.findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label_Active(
+                PageRequest.of(page, size, Sort.by("lastName")), search, search, search);
 
         teachers.forEach(t -> list.add(
                 new TeachersPayload(
