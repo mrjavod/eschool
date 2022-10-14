@@ -1,5 +1,6 @@
 package com.home.eschool.repository;
 
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.Teachers;
 import com.home.eschool.entity.enums.StateEnum;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,6 @@ import java.util.UUID;
 @Repository
 public interface TeachersRepo extends JpaRepository<Teachers, UUID> {
 
-    Page<Teachers> findAllByFirstNameContainsOrLastNameContainsOrSureNameContainsAndStates_Label_Active(
-            Pageable pageable, String firstName, String lastName, String sureName);
+    Page<Teachers> findAllByStatesAndFirstNameContainsOrLastNameContainsOrSureNameContains(
+            Pageable pageable, States states, String firstName, String lastName, String sureName);
 }
