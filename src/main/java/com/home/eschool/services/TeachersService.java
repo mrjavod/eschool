@@ -140,8 +140,8 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
 
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
-        Page<Teachers> teachers = teachersRepo.findAllByStatesAndFirstNameContainsOrLastNameContainsOrSureNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), states, search, search, search);
+        Page<Teachers> teachers = teachersRepo.findAllByStatesAndLastNameContains(
+                PageRequest.of(page, size, Sort.by("lastName")), states, search);
 
         teachers.forEach(t -> list.add(
                 new TeachersPayload(

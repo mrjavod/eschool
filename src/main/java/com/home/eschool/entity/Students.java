@@ -29,19 +29,19 @@ public class Students extends BaseEntity {
     private String address;
     private UUID avatar_id;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "text")
     private String mother;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "text")
     private String father;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "text")
     private String birthInfo;
 
     @Column(columnDefinition = "numeric")
     private BigDecimal monthlyPayment;
 
-    @Column(columnDefinition = "jsonb")
+    @Column(columnDefinition = "text")
     private String additionalInfo;
 
     @OneToOne

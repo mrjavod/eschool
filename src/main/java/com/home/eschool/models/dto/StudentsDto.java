@@ -1,5 +1,6 @@
 package com.home.eschool.models.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.home.eschool.entity.addinfo.BirthInfo;
 import com.home.eschool.entity.addinfo.Parents;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,5 +48,5 @@ public class StudentsDto {
     private Parents father;
     private BirthInfo birthInfo;
     private BigDecimal monthlyPayment;
-    private Object additionalInfo;
+    private JsonNode additionalInfo;
 }

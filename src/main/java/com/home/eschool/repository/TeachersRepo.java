@@ -15,4 +15,6 @@ public interface TeachersRepo extends JpaRepository<Teachers, UUID> {
 
     Page<Teachers> findAllByStatesAndFirstNameContainsOrLastNameContainsOrSureNameContains(
             Pageable pageable, States states, String firstName, String lastName, String sureName);
+
+    Page<Teachers> findAllByStatesAndLastNameContains(Pageable pageable, States states, String lastName);
 }
