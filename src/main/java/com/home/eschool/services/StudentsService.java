@@ -83,7 +83,7 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
             students.setBirthInfo(Utils.convertToString(studentsDto.getBirthInfo()));
         }
         if (studentsDto.getAdditionalInfo() != null) {
-            students.setAdditionalInfo(Utils.convertToString(studentsDto.getAdditionalInfo()));
+            students.setAdditionalInfo("{}");
         }
 
         studentsRepo.save(students);

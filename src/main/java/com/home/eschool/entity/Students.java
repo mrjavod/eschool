@@ -1,8 +1,5 @@
 package com.home.eschool.entity;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.home.eschool.entity.addinfo.BirthInfo;
-import com.home.eschool.entity.addinfo.Parents;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
