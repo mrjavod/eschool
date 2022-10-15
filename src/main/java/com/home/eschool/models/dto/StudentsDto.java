@@ -1,6 +1,5 @@
 package com.home.eschool.models.dto;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.home.eschool.entity.addinfo.BirthInfo;
 import com.home.eschool.entity.addinfo.Parents;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -49,5 +47,5 @@ public class StudentsDto {
     private Parents father;
     private BirthInfo birthInfo;
     private BigDecimal monthlyPayment;
-    private JsonNode additionalInfo;
+    private Object additionalInfo;
 }

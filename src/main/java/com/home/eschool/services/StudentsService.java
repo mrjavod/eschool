@@ -23,6 +23,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -52,6 +53,8 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(StudentsDto studentsDto) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         Students students = new Students();
         students.setId(UUID.randomUUID());
         students.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -60,10 +63,15 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         students.setLastName(studentsDto.getLastName());
         students.setSureName(studentsDto.getSureName());
         students.setAvatar_id(studentsDto.getAvatar_id());
-        students.setDateOfBirth(Date.valueOf(studentsDto.getDateOfBirth()));
         students.setAddress(studentsDto.getAddress());
         students.setPhoneNumber(studentsDto.getPhoneNumber());
         students.setMonthlyPayment(studentsDto.getMonthlyPayment());
+
+        try {
+            students.setDateOfBirth(new Date(simpleDateFormat.parse(studentsDto.getDateOfBirth()).getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (studentsDto.getMother() != null) {
             students.setMother(Utils.convertToString(studentsDto.getMother()));
@@ -85,6 +93,8 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void update(StudentsDto studentsDto) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
         Students students = studentsRepo.findById(studentsDto.getId()).orElse(null);
         if (students == null) {
             throw new ResponseStatusException(
@@ -97,10 +107,15 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         students.setLastName(studentsDto.getLastName());
         students.setSureName(studentsDto.getSureName());
         students.setAvatar_id(studentsDto.getAvatar_id());
-        students.setDateOfBirth(Date.valueOf(studentsDto.getDateOfBirth()));
         students.setAddress(studentsDto.getAddress());
         students.setPhoneNumber(studentsDto.getPhoneNumber());
         students.setMonthlyPayment(studentsDto.getMonthlyPayment());
+
+        try {
+            students.setDateOfBirth(new Date(simpleDateFormat.parse(studentsDto.getDateOfBirth()).getTime()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (studentsDto.getMother() != null) {
             students.setMother(Utils.convertToString(studentsDto.getMother()));
@@ -124,7 +139,7 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
 
         int size = 10;
         List<StudentsPayload> list = new ArrayList<>();
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         Page<Students> studentsPage = studentsRepo.findAllByFirstNameContainsOrLastNameContainsOrSureNameContains(
                 PageRequest.of(page, size, Sort.by("lastName")), search, search, search);
@@ -149,7 +164,7 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
 
     @Override
     public StudentsPayloadDetails getById(UUID id) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
         Students students = studentsRepo.findById(id).orElse(null);
         if (students == null) {
