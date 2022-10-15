@@ -26,10 +26,7 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -182,9 +179,9 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
                 studentClassesService.getClassesInfo(students),
                 students.getAddress(),
                 filesService.getFileInfo(students.getAvatar_id()),
-                Utils.convertToObject(students.getMother(), Parents.class),
-                Utils.convertToObject(students.getFather(), Parents.class),
-                Utils.convertToObject(students.getBirthInfo(), BirthInfo.class),
+                Utils.convertToObject(students.getMother()),
+                Utils.convertToObject(students.getFather()),
+                Utils.convertToObject(students.getBirthInfo()),
                 students.getMonthlyPayment(),
                 Utils.convertToObject(students.getAdditionalInfo(), JsonNode.class)
         );

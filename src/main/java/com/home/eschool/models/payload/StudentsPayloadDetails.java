@@ -19,11 +19,11 @@ public class StudentsPayloadDetails extends StudentsPayload {
 
     private String address;
     private FilesPayload avatar;
-    private Parents mother;
-    private Parents father;
-    private BirthInfo birthInfo;
+    private Object mother;
+    private Object father;
+    private Object birthInfo;
     private BigDecimal monthlyPayment;
-    private JsonNode additionalInfo;
+    private Object additionalInfo;
 
     public StudentsPayloadDetails(UUID id,
                                   String firstName,
@@ -34,11 +34,11 @@ public class StudentsPayloadDetails extends StudentsPayload {
                                   ClassesPayload classes,
                                   String address,
                                   FilesPayload avatar,
-                                  Parents mother,
-                                  Parents father,
-                                  BirthInfo birthInfo,
+                                  Object mother,
+                                  Object father,
+                                  Object birthInfo,
                                   BigDecimal monthlyPayment,
-                                  JsonNode additionalInfo) {
+                                  Object additionalInfo) {
         super(id, firstName, lastName, sureName, dateOfBirth, phoneNumber, classes);
         this.address = address;
         this.avatar = avatar;
