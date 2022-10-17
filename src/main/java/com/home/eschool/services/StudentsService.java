@@ -65,6 +65,7 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         students.setAddress(studentsDto.getAddress());
         students.setPhoneNumber(studentsDto.getPhoneNumber());
         students.setMonthlyPayment(studentsDto.getMonthlyPayment());
+        students.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
 
         try {
             students.setDateOfBirth(new Date(simpleDateFormat.parse(studentsDto.getDateOfBirth()).getTime()));
