@@ -1,11 +1,10 @@
 package com.home.eschool.services;
 
-import com.home.eschool.entity.Classes;
 import com.home.eschool.entity.Languages;
 import com.home.eschool.entity.Subjects;
+import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.SubjectsPayload;
-import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.repository.SubjectsRepo;
 import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;

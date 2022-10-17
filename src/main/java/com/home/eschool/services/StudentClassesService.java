@@ -40,7 +40,7 @@ public class StudentClassesService {
         Classes classes = classesService.findById(classId);
         if (classes == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                    HttpStatus.BAD_REQUEST, "Incorrect Class Id");
         }
 
         StudentClasses studentClasses = new StudentClasses();
@@ -64,7 +64,7 @@ public class StudentClassesService {
             Classes classes = classesService.findById(classId);
             if (classes == null) {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                        HttpStatus.BAD_REQUEST, "Incorrect Class Id");
             }
 
             StudentClasses studentClasses = oldStudentClasses.get();

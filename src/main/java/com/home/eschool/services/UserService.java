@@ -111,6 +111,7 @@ public class UserService {
      * @param profile Users
      */
     void deleteUser(Users profile) {
-        userRepo.delete(profile);
+        profile.setState(stateService.getStateByLabel(StateEnum.DELETED));
+        userRepo.save(profile);
     }
 }

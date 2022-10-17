@@ -1,8 +1,8 @@
 package com.home.eschool.controller;
 
+import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.SubjectsPayload;
-import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.services.SubjectsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

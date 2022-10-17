@@ -140,8 +140,8 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
 
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
-        Page<Teachers> teachers = teachersRepo.findAllByStatesAndLastNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), states, search);
+        Page<Teachers> teachers = teachersRepo.listOfActiveTeachers(
+                PageRequest.of(page, size, Sort.by("lastName")), states);
 
         teachers.forEach(t -> list.add(
                 new TeachersPayload(
@@ -205,7 +205,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
                 t.setStates(states);
 
                 teachersRepo.save(t);
-                //userService.deleteUser(optional.get().getProfile());
+                userService.deleteUser(optional.get().getProfile());
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");

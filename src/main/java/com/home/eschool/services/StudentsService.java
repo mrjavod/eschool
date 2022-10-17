@@ -1,15 +1,14 @@
 package com.home.eschool.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.Students;
-import com.home.eschool.entity.Teachers;
-import com.home.eschool.entity.addinfo.BirthInfo;
-import com.home.eschool.entity.addinfo.Parents;
+import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.StudentsDto;
-import com.home.eschool.models.dto.TeachersDto;
-import com.home.eschool.models.payload.*;
+import com.home.eschool.models.payload.PageablePayload;
+import com.home.eschool.models.payload.StudentsPayload;
+import com.home.eschool.models.payload.StudentsPayloadDetails;
 import com.home.eschool.repository.StudentsRepo;
-import com.home.eschool.repository.TeachersRepo;
 import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
 import com.home.eschool.utils.Utils;
@@ -26,7 +25,10 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -138,8 +140,10 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         List<StudentsPayload> list = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        Page<Students> studentsPage = studentsRepo.findAllByFirstNameContainsOrLastNameContainsOrSureNameContains(
-                PageRequest.of(page, size, Sort.by("lastName")), search, search, search);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+
+        Page<Students> studentsPage = studentsRepo.listOfActiveStudents(
+                PageRequest.of(page, size, Sort.by("lastName")), states);
 
         studentsPage.forEach(t -> list.add(
                 new StudentsPayload(
@@ -166,7 +170,7 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
         Students students = studentsRepo.findById(id).orElse(null);
         if (students == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
+                    HttpStatus.BAD_REQUEST, "Incorrect Student Id");
         }
 
         return new StudentsPayloadDetails(
@@ -190,13 +194,16 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void delete(List<UUID> teachers) {
+        States states = stateService.getStateByLabel(StateEnum.DELETED);
         teachers.forEach(s -> {
             Optional<Students> optional = studentsRepo.findById(s);
             if (optional.isPresent()) {
-                studentsRepo.deleteById(s);
+                Students t = optional.get();
+                t.setState(states);
+                studentsRepo.save(t);
             } else {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                        HttpStatus.BAD_REQUEST, "Incorrect Student Id");
             }
         });
     }
