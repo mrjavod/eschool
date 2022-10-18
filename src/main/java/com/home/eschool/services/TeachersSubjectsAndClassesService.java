@@ -1,5 +1,7 @@
 package com.home.eschool.services;
 
+import com.home.eschool.entity.Classes;
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.TeachersSubjectsAndClasses;
 import com.home.eschool.entity.enums.SetsEnum;
 import com.home.eschool.entity.enums.StateEnum;
@@ -106,8 +108,11 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
         List<TeachersSubjectsAndClassesPayload> list = new ArrayList<>();
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-        Page<TeachersSubjectsAndClasses> pageData = teachersSubjectsAndClassesRepo.findAll(
-                PageRequest.of(page, size), search);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+        Classes classes = classesService.findById(UUID.fromString(search));
+
+        Page<TeachersSubjectsAndClasses> pageData = teachersSubjectsAndClassesRepo.list(
+                PageRequest.of(page, size), classes, states);
 
         pageData.forEach(t -> list.add(
                 new TeachersSubjectsAndClassesPayload(

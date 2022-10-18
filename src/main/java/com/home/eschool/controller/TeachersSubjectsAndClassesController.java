@@ -28,8 +28,8 @@ public class TeachersSubjectsAndClassesController {
 
     @GetMapping("/")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public PageablePayload getAll(@RequestParam(required = false, name = "page", defaultValue = "0") int page,
-                                  @RequestParam(required = false, name = "search", defaultValue = "") String search) {
+    public PageablePayload getAll(@RequestParam(name = "page", defaultValue = "0") int page,
+                                  @RequestParam(name = "search", defaultValue = "") String search) {
         return teachersSubjectsAndClassesService.getAll(page, search);
     }
 

@@ -1,5 +1,7 @@
 package com.home.eschool.repository;
 
+import com.home.eschool.entity.Classes;
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.TeachersSubjectsAndClasses;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +14,8 @@ import java.util.UUID;
 @Repository
 public interface TeachersSubjectsAndClassesRepo extends JpaRepository<TeachersSubjectsAndClasses, UUID> {
 
-    @Query(nativeQuery = true,
-            value = "select u from TeachersSubjectsAndClasses u \n" +
-                    "inner join teachers t on t.id = u.teacher_id \n" +
-                    "inner join subjects s on s.id = u.subject_id \n" +
-                    "inner join classes c on c.id = u.class_id \n" +
-                    "where u.state_id='ACTIVE'")
-    Page<TeachersSubjectsAndClasses> findAll(Pageable pageable, String search);
+    @Query("select t from TeachersSubjectsAndClasses t where t.classes=?1 and t.states=?2")
+    Page<TeachersSubjectsAndClasses> list(Pageable pageable,
+                                          Classes classes,
+                                          States state);
 }
