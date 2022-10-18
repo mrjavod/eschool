@@ -2,6 +2,8 @@ package com.home.eschool.services;
 
 import com.home.eschool.entity.Classes;
 import com.home.eschool.entity.Languages;
+import com.home.eschool.entity.States;
+import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.ClassesDto;
 import com.home.eschool.models.payload.ClassesPayload;
 import com.home.eschool.models.payload.PageablePayload;
@@ -27,17 +29,21 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
 
     private final ClassesRepo classesRepo;
     private final LanguageService languageService;
+    private final StateService stateService;
 
     public ClassesService(ClassesRepo classesRepo,
-                          LanguageService languageService) {
+                          LanguageService languageService,
+                          StateService stateService) {
         this.classesRepo = classesRepo;
         this.languageService = languageService;
+        this.stateService = stateService;
     }
 
     @Override
     public void create(List<ClassesDto> classes) {
         List<Classes> list = new ArrayList<>();
         Languages language = languageService.getLanguageByLabel(Settings.getLang());
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
         for (ClassesDto aClass : classes) {
             Classes newClass = new Classes();
@@ -47,6 +53,7 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
             newClass.setCreateUser(Settings.getCurrentUser());
             newClass.setLang(language);
             newClass.setName(aClass.getName());
+            newClass.setState(states);
             list.add(newClass);
         }
 
@@ -133,6 +140,10 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
 
     public Classes findById(UUID id) {
         return classesRepo.findById(id).orElse(null);
+    }
+
+    public List<Classes> getAllClasses() {
+        return classesRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
 
 }

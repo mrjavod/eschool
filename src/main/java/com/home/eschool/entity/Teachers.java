@@ -53,5 +53,5 @@ public class Teachers extends BaseEntity {
     private Users profile;
 
     @OneToOne
-    private States states;
+    private States state;
 }

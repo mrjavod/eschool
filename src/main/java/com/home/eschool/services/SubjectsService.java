@@ -1,7 +1,9 @@
 package com.home.eschool.services;
 
 import com.home.eschool.entity.Languages;
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.Subjects;
+import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.SubjectsDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.SubjectsPayload;
@@ -27,17 +29,21 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
 
     private final SubjectsRepo subjectsRepo;
     private final LanguageService languageService;
+    private final StateService stateService;
 
     public SubjectsService(SubjectsRepo subjectsRepo,
-                           LanguageService languageService) {
+                           LanguageService languageService,
+                           StateService stateService) {
         this.subjectsRepo = subjectsRepo;
         this.languageService = languageService;
+        this.stateService = stateService;
     }
 
     @Override
     public void create(List<SubjectsDto> subjects) {
         List<Subjects> list = new ArrayList<>();
         Languages language = languageService.getLanguageByLabel(Settings.getLang());
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
         for (SubjectsDto subjectsDto : subjects) {
             Subjects newClass = new Subjects();
@@ -47,6 +53,7 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
             newClass.setCreateUser(Settings.getCurrentUser());
             newClass.setLang(language);
             newClass.setName(subjectsDto.getName());
+            newClass.setState(states);
             list.add(newClass);
         }
 
@@ -136,5 +143,9 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
         }
 
         return subjectsRepo.findById(subjectId).orElse(null);
+    }
+
+    public List<Subjects> getAllSubjects() {
+        return subjectsRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
 }

@@ -82,7 +82,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         teachers.setReference_086_id(teacher.getReference_086_id());
         teachers.setCovid_test_id(teacher.getCovid_test_id());
         teachers.setSecond_diploma_id(teacher.getSecond_diploma_id());
-        teachers.setStates(stateService.getStateByLabel(StateEnum.ACTIVE));
+        teachers.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
 
         teachersRepo.save(teachers);
     }
@@ -202,7 +202,7 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
             Optional<Teachers> optional = teachersRepo.findById(s);
             if (optional.isPresent()) {
                 Teachers t = optional.get();
-                t.setStates(states);
+                t.setState(states);
 
                 teachersRepo.save(t);
                 userService.deleteUser(optional.get().getProfile());
@@ -219,5 +219,9 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         }
 
         return teachersRepo.findById(teacherId).orElse(null);
+    }
+
+    public List<Teachers> getAllTeachers() {
+        return teachersRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
 }

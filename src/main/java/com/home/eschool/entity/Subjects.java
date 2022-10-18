@@ -20,4 +20,7 @@ public class Subjects extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Languages lang;
+
+    @OneToOne
+    private States state;
 }

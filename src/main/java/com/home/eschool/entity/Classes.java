@@ -22,4 +22,7 @@ public class Classes extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL)
     private Languages lang;
+
+    @OneToOne
+    private States state;
 }
