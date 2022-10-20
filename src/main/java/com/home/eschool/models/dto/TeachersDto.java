@@ -39,9 +39,11 @@ public class TeachersDto {
     private String passportSeries;
     private String passportNumber;
 
-    @Schema(description = "Tug'ilgan sana: format(yyyy-mm-dd)", example = "1995-09-30")
+    @NotNull
+    @Schema(required = true, description = "Tug'ilgan sana: format(yyyy-mm-dd)", example = "30-09-1995")
     private String dateOfBirth;
 
+    @NotNull
     @Schema(required = true)
     private String phoneNumber;
     private String secondPhoneNumber;

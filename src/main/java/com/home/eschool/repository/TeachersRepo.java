@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,4 +20,11 @@ public interface TeachersRepo extends JpaRepository<Teachers, UUID> {
     Page<Teachers> listOfActiveTeachers(Pageable pageable, States state);
 
     List<Teachers> findAllByStateLabel(StateEnum stateEnum);
+
+    Optional<Teachers> findByInn(String inn);
+
+    Optional<Teachers> findByPassportNumber(String passportNumber);
+
+    Optional<Teachers> findByPhoneNumber(String phoneNumber);
+
 }

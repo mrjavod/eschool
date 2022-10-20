@@ -5,6 +5,7 @@ import com.home.eschool.entity.States;
 import com.home.eschool.entity.Students;
 import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.StudentsDto;
+import com.home.eschool.models.payload.ClassStudentsPayload;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.StudentsPayload;
 import com.home.eschool.models.payload.StudentsPayloadDetails;
@@ -207,5 +208,38 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
                         HttpStatus.BAD_REQUEST, "Incorrect Student Id");
             }
         });
+    }
+
+    public List<ClassStudentsPayload> getStudentsByClass(UUID classId) {
+        return studentClassesService.getStudentsByClass(classId);
+    }
+
+    public Students getStudentById(UUID id) {
+        return studentsRepo.findById(id).orElseThrow(() -> {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunday ID ga ega o'quvchi topilmadi !");
+        });
+    }
+
+    public StudentsPayload getStudentsPayload(Students student) {
+        if (student == null) {
+            return null;
+        }
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        return new StudentsPayload(
+                student.getId(),
+                student.getFirstName(),
+                student.getLastName(),
+                student.getSureName(),
+                simpleDateFormat.format(student.getDateOfBirth()),
+                student.getPhoneNumber(),
+                studentClassesService.getClassesInfo(student)
+        );
+    }
+
+    public List<Students> findStudentsByName(String name) {
+        return studentsRepo.findAllByFirstNameContainsOrLastNameOrSureNameContains(name, name, name);
     }
 }

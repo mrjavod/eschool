@@ -1,6 +1,7 @@
 package com.home.eschool.controller;
 
 import com.home.eschool.models.dto.StudentsDto;
+import com.home.eschool.models.payload.ClassStudentsPayload;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.StudentsPayloadDetails;
 import com.home.eschool.services.StudentsService;
@@ -59,5 +60,10 @@ public class StudentsController {
         studentsService.delete(students);
     }
 
+    @GetMapping("/getStudentsByClass/{classId}")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    public List<ClassStudentsPayload> getStudentsByClass(@PathVariable("classId") UUID classId) {
+        return studentsService.getStudentsByClass(classId);
+    }
 
 }

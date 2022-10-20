@@ -49,83 +49,134 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
-    public void create(TeachersDto teacher) {
+    public void create(TeachersDto teachersDto) {
 
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        Optional<Teachers> t = teachersRepo.findByInn(teachersDto.getInn());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda INN ga ega ustoz tizimda mavjud !");
+        } else if (setActive(t)) return;
+
+        t = teachersRepo.findByPassportNumber(teachersDto.getPassportNumber());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda PASPORT RAQAM ga ega ustoz tizimda mavjud !");
+        } else if (setActive(t)) return;
+
+        t = teachersRepo.findByPhoneNumber(teachersDto.getPassportNumber());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda TELEFON RAQAM ga ega ustoz tizimda mavjud !");
+        } else if (setActive(t)) return;
 
         Teachers teachers = new Teachers();
         teachers.setId(UUID.randomUUID());
         teachers.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
         teachers.setCreateUser(Settings.getCurrentUser());
-        teachers.setFirstName(teacher.getFirstName());
-        teachers.setLastName(teacher.getLastName());
-        teachers.setSureName(teacher.getSureName());
-        teachers.setInn(teacher.getInn());
-        teachers.setInps(teacher.getInps());
-        teachers.setDiploma_id(teacher.getDiploma_id());
-        teachers.setPassport_id(teacher.getPassport_id());
-        teachers.setAvatar_id(teacher.getAvatar_id());
-        teachers.setPassportSeries(teacher.getPassportSeries());
-        teachers.setPassportNumber(teacher.getPassportNumber());
+        teachers.setFirstName(teachersDto.getFirstName());
+        teachers.setLastName(teachersDto.getLastName());
+        teachers.setSureName(teachersDto.getSureName());
+        teachers.setInn(teachersDto.getInn());
+        teachers.setInps(teachersDto.getInps());
+        teachers.setDiploma_id(teachersDto.getDiploma_id());
+        teachers.setPassport_id(teachersDto.getPassport_id());
+        teachers.setAvatar_id(teachersDto.getAvatar_id());
+        teachers.setPassportSeries(teachersDto.getPassportSeries());
+        teachers.setPassportNumber(teachersDto.getPassportNumber());
         try {
-            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teacher.getDateOfBirth()).getTime()));
+            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teachersDto.getDateOfBirth()).getTime()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        teachers.setAddress(teacher.getAddress());
-        teachers.setEmail(teacher.getEmail());
-        teachers.setPhoneNumber(teacher.getPhoneNumber());
+        teachers.setAddress(teachersDto.getAddress());
+        teachers.setEmail(teachersDto.getEmail());
+        teachers.setPhoneNumber(teachersDto.getPhoneNumber());
         teachers.setProfile(userService.createProfile(teachers));
 
-        teachers.setSecondPhoneNumber(teacher.getSecondPhoneNumber());
-        teachers.setPnfl(teacher.getPnfl());
-        teachers.setReference_086_id(teacher.getReference_086_id());
-        teachers.setCovid_test_id(teacher.getCovid_test_id());
-        teachers.setSecond_diploma_id(teacher.getSecond_diploma_id());
+        teachers.setSecondPhoneNumber(teachersDto.getSecondPhoneNumber());
+        teachers.setPnfl(teachersDto.getPnfl());
+        teachers.setReference_086_id(teachersDto.getReference_086_id());
+        teachers.setCovid_test_id(teachersDto.getCovid_test_id());
+        teachers.setSecond_diploma_id(teachersDto.getSecond_diploma_id());
         teachers.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
 
         teachersRepo.save(teachers);
     }
 
+    private boolean setActive(Optional<Teachers> t) {
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.DELETED)) {
+            Teachers teacher = t.get();
+            teacher.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+            teacher.setChangeUser(Settings.getCurrentUser());
+            teacher.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
+            teachersRepo.save(teacher);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     @Transactional(rollbackFor = Throwable.class)
-    public void update(TeachersDto teacher) {
+    public void update(TeachersDto teachersDto) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        Teachers teachers = teachersRepo.findById(teacher.getId()).orElse(null);
+        Teachers teachers = teachersRepo.findById(teachersDto.getId()).orElse(null);
         if (teachers == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
+                    HttpStatus.BAD_REQUEST, "Bunday ID ga ega ustoz topilmadi !");
+        }
+
+        Optional<Teachers> t = teachersRepo.findByInn(teachersDto.getInn());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE) &&
+                !t.get().getId().equals(teachers.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda INN ga ega ustoz tizimda mavjud !");
+        }
+
+        t = teachersRepo.findByPassportNumber(teachersDto.getPassportNumber());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE) &&
+                !t.get().getId().equals(teachers.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda PASPORT RAQAM ga ega ustoz tizimda mavjud !");
+        }
+
+        t = teachersRepo.findByPhoneNumber(teachersDto.getPassportNumber());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE) &&
+                !t.get().getId().equals(teachers.getId())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunda TELEFON RAQAM ga ega ustoz tizimda mavjud !");
         }
 
         teachers.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
         teachers.setChangeUser(Settings.getCurrentUser());
-        teachers.setFirstName(teacher.getFirstName());
-        teachers.setLastName(teacher.getLastName());
-        teachers.setSureName(teacher.getSureName());
-        teachers.setInn(teacher.getInn());
-        teachers.setInps(teacher.getInps());
-        teachers.setDiploma_id(teacher.getDiploma_id());
-        teachers.setPassport_id(teacher.getPassport_id());
-        teachers.setAvatar_id(teacher.getAvatar_id());
-        teachers.setPassportSeries(teacher.getPassportSeries());
-        teachers.setPassportNumber(teacher.getPassportNumber());
+        teachers.setFirstName(teachersDto.getFirstName());
+        teachers.setLastName(teachersDto.getLastName());
+        teachers.setSureName(teachersDto.getSureName());
+        teachers.setInn(teachersDto.getInn());
+        teachers.setInps(teachersDto.getInps());
+        teachers.setDiploma_id(teachersDto.getDiploma_id());
+        teachers.setPassport_id(teachersDto.getPassport_id());
+        teachers.setAvatar_id(teachersDto.getAvatar_id());
+        teachers.setPassportSeries(teachersDto.getPassportSeries());
+        teachers.setPassportNumber(teachersDto.getPassportNumber());
 
         try {
-            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teacher.getDateOfBirth()).getTime()));
+            teachers.setDateOfBirth(new Date(simpleDateFormat.parse(teachersDto.getDateOfBirth()).getTime()));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        teachers.setAddress(teacher.getAddress());
-        teachers.setEmail(teacher.getEmail());
-        teachers.setPhoneNumber(teacher.getPhoneNumber());
+        teachers.setAddress(teachersDto.getAddress());
+        teachers.setEmail(teachersDto.getEmail());
+        teachers.setPhoneNumber(teachersDto.getPhoneNumber());
 
-        teachers.setSecondPhoneNumber(teacher.getSecondPhoneNumber());
-        teachers.setPnfl(teacher.getPnfl());
-        teachers.setReference_086_id(teacher.getReference_086_id());
-        teachers.setCovid_test_id(teacher.getCovid_test_id());
-        teachers.setSecond_diploma_id(teacher.getSecond_diploma_id());
+        teachers.setSecondPhoneNumber(teachersDto.getSecondPhoneNumber());
+        teachers.setPnfl(teachersDto.getPnfl());
+        teachers.setReference_086_id(teachersDto.getReference_086_id());
+        teachers.setCovid_test_id(teachersDto.getCovid_test_id());
+        teachers.setSecond_diploma_id(teachersDto.getSecond_diploma_id());
 
         userService.updateProfile(teachers);
         teachersRepo.save(teachers);
@@ -202,13 +253,15 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
             Optional<Teachers> optional = teachersRepo.findById(s);
             if (optional.isPresent()) {
                 Teachers t = optional.get();
+                t.setChangeUser(Settings.getCurrentUser());
+                t.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
                 t.setState(states);
 
                 teachersRepo.save(t);
                 userService.deleteUser(optional.get().getProfile());
             } else {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                        HttpStatus.BAD_REQUEST, "Bunday ID ga ega ustoz topilmadi !");
             }
         });
     }

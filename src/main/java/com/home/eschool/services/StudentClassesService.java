@@ -1,10 +1,12 @@
 package com.home.eschool.services;
 
 import com.home.eschool.entity.Classes;
+import com.home.eschool.entity.States;
 import com.home.eschool.entity.StudentClasses;
 import com.home.eschool.entity.Students;
 import com.home.eschool.entity.enums.SetsEnum;
 import com.home.eschool.entity.enums.StateEnum;
+import com.home.eschool.models.payload.ClassStudentsPayload;
 import com.home.eschool.models.payload.ClassesPayload;
 import com.home.eschool.repository.StudentClassesRepo;
 import com.home.eschool.utils.Settings;
@@ -14,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -83,5 +87,28 @@ public class StudentClassesService {
             return new ClassesPayload(classes.getId(), classes.getName());
         }
         return null;
+    }
+
+    public List<ClassStudentsPayload> getStudentsByClass(UUID classId) {
+
+        Classes classes = classesService.findById(classId);
+        if (classes == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "ID bo'yicha sinf topilmadi !");
+        }
+
+        List<ClassStudentsPayload> list = new ArrayList<>();
+
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+        UUID studyYear = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+
+        studentClassesRepo.findByClassesAndStatesAndStudyYearId(classes, states, studyYear).forEach(e -> {
+            Students student = e.getStudents();
+            list.add(new ClassStudentsPayload(student.getId(),
+                    String.format("%s %s %s", student.getLastName(), student.getFirstName(), student.getSureName()),
+                    student.getMonthlyPayment()));
+        });
+
+        return list;
     }
 }

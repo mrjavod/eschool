@@ -1,8 +1,6 @@
 package com.home.eschool.services;
 
-import com.home.eschool.entity.Classes;
-import com.home.eschool.entity.States;
-import com.home.eschool.entity.TeachersSubjectsAndClasses;
+import com.home.eschool.entity.*;
 import com.home.eschool.entity.enums.SetsEnum;
 import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.TeachersSubjectsAndClassesDto;
@@ -52,35 +50,43 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(TeachersSubjectsAndClassesDto t) {
-        TeachersSubjectsAndClasses data = new TeachersSubjectsAndClasses();
-        data.setId(UUID.randomUUID());
-        data.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
-        data.setCreateUser(Settings.getCurrentUser());
-        data.setStates(stateService.getStateByLabel(StateEnum.ACTIVE));
-        data.setStudyYearId(appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR));
-        data.setClasses(classesService.findById(t.getClassId()));
-        data.setTeachers(teachersService.findById(t.getTeacherId()));
-        data.setSubjects(subjectsService.findById(t.getSubjectId()));
 
-        teachersSubjectsAndClassesRepo.save(data);
+        Classes classes = classesService.findById(t.getClassId());
+        Teachers teachers = teachersService.findById(t.getTeacherId());
+        Subjects subjects = subjectsService.findById(t.getSubjectId());
+        UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+
+        Optional<TeachersSubjectsAndClasses> tsc = teachersSubjectsAndClassesRepo.getTeachersSubjectsAndClasses(
+                teachers, subjects, classes, studyYearId
+        );
+
+        if (!tsc.isPresent()) {
+
+            TeachersSubjectsAndClasses data = new TeachersSubjectsAndClasses();
+            data.setId(UUID.randomUUID());
+            data.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+            data.setCreateUser(Settings.getCurrentUser());
+            data.setStates(stateService.getStateByLabel(StateEnum.ACTIVE));
+            data.setStudyYearId(studyYearId);
+            data.setClasses(classes);
+            data.setTeachers(teachers);
+            data.setSubjects(subjects);
+            teachersSubjectsAndClassesRepo.save(data);
+
+        } else {
+
+            TeachersSubjectsAndClasses data = tsc.get();
+            if (data.getStates().getLabel().equals(StateEnum.DELETED)) {
+                data.setStates(stateService.getStateByLabel(StateEnum.ACTIVE));
+                teachersSubjectsAndClassesRepo.save(data);
+            }
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void update(TeachersSubjectsAndClassesDto t) {
-        TeachersSubjectsAndClasses data = teachersSubjectsAndClassesRepo.findById(t.getId()).orElse(null);
-        if (data == null) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
-        }
 
-        data.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
-        data.setChangeUser(Settings.getCurrentUser());
-        data.setClasses(classesService.findById(t.getClassId()));
-        data.setTeachers(teachersService.findById(t.getTeacherId()));
-        data.setSubjects(subjectsService.findById(t.getSubjectId()));
-
-        teachersSubjectsAndClassesRepo.save(data);
     }
 
     @Override
@@ -97,7 +103,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
                 teachersSubjectsAndClassesRepo.save(data);
             } else {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                        HttpStatus.BAD_REQUEST, "Incorrect Id");
             }
         });
     }
@@ -142,7 +148,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
         TeachersSubjectsAndClasses t = teachersSubjectsAndClassesRepo.findById(id).orElse(null);
         if (t == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Teacher Id");
+                    HttpStatus.BAD_REQUEST, "Incorrect Id");
         }
 
         return new TeachersSubjectsAndClassesPayload(

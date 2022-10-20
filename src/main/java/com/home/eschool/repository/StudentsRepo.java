@@ -8,15 +8,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface StudentsRepo extends JpaRepository<Students, UUID> {
 
-    Page<Students> findAllByFirstNameContainsOrLastNameContainsOrSureNameContains(Pageable pageable,
-                                                                                  String firstName,
-                                                                                  String lastName,
-                                                                                  String sureName);
+    List<Students> findAllByFirstNameContainsOrLastNameOrSureNameContains(
+            String firstName, String lastName, String sureName
+    );
 
     @Query("select t from Students t where t.state = ?1")
     Page<Students> listOfActiveStudents(Pageable pageable, States states);
