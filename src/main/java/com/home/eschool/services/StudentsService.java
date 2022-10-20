@@ -215,10 +215,12 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     }
 
     public Students getStudentById(UUID id) {
-        return studentsRepo.findById(id).orElseThrow(() -> {
+        Students students = studentsRepo.findById(id).orElse(null);
+        if (students == null) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Bunday ID ga ega o'quvchi topilmadi !");
-        });
+        }
+        return students;
     }
 
     public StudentsPayload getStudentsPayload(Students student) {
