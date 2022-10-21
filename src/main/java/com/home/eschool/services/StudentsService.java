@@ -242,6 +242,10 @@ public class StudentsService implements CrudInterface<StudentsDto, StudentsPaylo
     }
 
     public List<Students> findStudentsByName(String name) {
-        return studentsRepo.findAllByFirstNameContainsOrLastNameOrSureNameContains(name, name, name);
+        return studentsRepo.findAllByName(name.toLowerCase());
+    }
+
+    public List<Students> getAllStudents() {
+        return studentsRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
 }

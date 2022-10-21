@@ -9,6 +9,7 @@ import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.PaymentsDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.PaymentsPayload;
+import com.home.eschool.models.payload.PaymentsStatsPayload;
 import com.home.eschool.repository.PaymentsRepo;
 import com.home.eschool.utils.Settings;
 import com.home.eschool.utils.Utils;
@@ -52,7 +53,7 @@ public class PaymentsService {
         UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
 
         int size = 10;
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH24:mm:ss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
         Page<Payments> payments = paymentsRepo.findAllByStateAndStudyYearId(
                 PageRequest.of(page, size, Sort.by("createDate")), states, studyYearId);
@@ -129,5 +130,13 @@ public class PaymentsService {
                         HttpStatus.BAD_REQUEST, "Bunday ID topilmadi !");
             }
         });
+    }
+
+    public PaymentsStatsPayload getStats() {
+        UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+        return new PaymentsStatsPayload(
+                appSettingsService.getStudyYearsById(studyYearId),
+                paymentsRepo.getStatsByStudyYear(studyYearId)
+        );
     }
 }

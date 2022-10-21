@@ -66,4 +66,11 @@ public class StudentsController {
         return studentsService.getStudentsByClass(classId);
     }
 
+    @PostMapping("/count")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @Secured("ROLE_ADMIN")
+    public int count() {
+        return studentsService.getAllStudents().size();
+    }
+
 }

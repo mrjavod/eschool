@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -59,6 +60,15 @@ public class AppSettingsService {
     public StudyYearsPayload getStudyYearsByName(String name) {
         return getStudyYears().stream().filter(e -> e.getName().equalsIgnoreCase(name))
                 .findFirst().orElse(null);
+    }
+
+    public StudyYearsPayload getStudyYearsById(UUID id) {
+        Optional<AppSettings> optional = appSettingsRepo.findByKey(id);
+        if (optional.isPresent()) {
+            AppSettings settings = optional.get();
+            return new StudyYearsPayload(settings.getKey(), settings.getValue());
+        }
+        return null;
     }
 
     public UUID getKeyByLabel(SetsEnum label) {

@@ -3,6 +3,7 @@ package com.home.eschool.controller;
 import com.home.eschool.models.dto.PaymentsDto;
 import com.home.eschool.models.payload.PageablePayload;
 import com.home.eschool.models.payload.PaymentsPayload;
+import com.home.eschool.models.payload.PaymentsStatsPayload;
 import com.home.eschool.services.PaymentsService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -51,5 +52,11 @@ public class PaymentsController {
     @Secured("ROLE_ADMIN")
     public void delete(@RequestBody List<UUID> payments) {
         paymentsService.delete(payments);
+    }
+
+    @GetMapping("/stats")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    public PaymentsStatsPayload getStats() {
+        return paymentsService.getStats();
     }
 }

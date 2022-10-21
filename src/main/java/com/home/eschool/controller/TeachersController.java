@@ -59,5 +59,12 @@ public class TeachersController {
         teachersService.delete(teachers);
     }
 
+    @PostMapping("/count")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @Secured("ROLE_ADMIN")
+    public int count() {
+        return teachersService.getAllTeachers().size();
+    }
+
 
 }

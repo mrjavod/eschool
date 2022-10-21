@@ -12,4 +12,6 @@ import java.util.UUID;
 public interface AppSettingsRepo extends JpaRepository<AppSettings, UUID> {
 
     Optional<AppSettings> findByLabel(SetsEnum label);
+
+    Optional<AppSettings> findByKey(UUID key);
 }
