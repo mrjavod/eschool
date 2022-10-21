@@ -20,9 +20,13 @@ public interface PaymentsRepo extends JpaRepository<Payments, UUID> {
             UUID studyYearId
     );
 
-    Page<Payments> findAllByStateAndStudyYearIdAndPaymentDateStartsWith(
+    @Query(nativeQuery = true,
+            value = "select t.* from payments t " +
+                    "where to_char(t.payment_date, 'yyyy-mm-dd') = ?3 and t.study_year_id = ?2 and t.state_id = ?1",
+            countQuery = "select count(*) from payments t")
+    Page<Payments> findAllByPaymentDate(
             Pageable pageable,
-            States states,
+            UUID stateId,
             UUID studyYearId,
             String paymentDate
     );
@@ -34,9 +38,16 @@ public interface PaymentsRepo extends JpaRepository<Payments, UUID> {
             List<Students> studentsList
     );
 
-    Page<Payments> findAllByStateAndStudyYearIdAndPaymentDateStartsWithAndStudentsIn(
+    @Query(nativeQuery = true,
+            value = "select t.* from payments t " +
+                    "where to_char(t.payment_date, 'yyyy-mm-dd') = ?3" +
+                    " and t.study_year_id = ?2" +
+                    " and t.state_id = ?1 " +
+                    " and t.student_id in (?4)",
+            countQuery = "select count(*) from payments t")
+    Page<Payments> findAllByCdateAndName(
             Pageable pageable,
-            States states,
+            UUID stateId,
             UUID studyYearId,
             String paymentDate,
             List<Students> studentsList

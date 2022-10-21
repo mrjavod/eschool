@@ -61,13 +61,13 @@ public class PaymentsService {
         if (!Utils.isEmpty(cdate) && !Utils.isEmpty(name)) {
             List<Students> students = studentsService.findStudentsByName(name);
 
-            payments = paymentsRepo.findAllByStateAndStudyYearIdAndPaymentDateStartsWithAndStudentsIn(
-                    PageRequest.of(page, size, Sort.by("createDate")), states, studyYearId, cdate, students);
+            payments = paymentsRepo.findAllByCdateAndName(
+                    PageRequest.of(page, size, Sort.by("create_date")), states.getId(), studyYearId, cdate, students);
 
         } else if (!Utils.isEmpty(cdate)) {
 
-            payments = paymentsRepo.findAllByStateAndStudyYearIdAndPaymentDateStartsWith(
-                    PageRequest.of(page, size, Sort.by("createDate")), states, studyYearId, cdate);
+            payments = paymentsRepo.findAllByPaymentDate(
+                    PageRequest.of(page, size, Sort.by("create_date")), states.getId(), studyYearId, cdate);
 
         } else if (!Utils.isEmpty(name)) {
             List<Students> students = studentsService.findStudentsByName(name);
