@@ -7,12 +7,11 @@ import com.home.eschool.entity.enums.PaymentTypeEnum;
 import com.home.eschool.entity.enums.SetsEnum;
 import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.PaymentsDto;
-import com.home.eschool.models.payload.PageablePayload;
-import com.home.eschool.models.payload.PaymentsPayload;
-import com.home.eschool.models.payload.PaymentsStatsPayload;
+import com.home.eschool.models.payload.*;
 import com.home.eschool.repository.PaymentsRepo;
 import com.home.eschool.utils.Settings;
 import com.home.eschool.utils.Utils;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,15 +35,18 @@ public class PaymentsService {
     private final StateService stateService;
     private final AppSettingsService appSettingsService;
     private final StudentsService studentsService;
+    private final StudentClassesService studentClassesService;
 
     public PaymentsService(PaymentsRepo paymentsRepo,
                            StateService stateService,
                            AppSettingsService appSettingsService,
-                           StudentsService studentsService) {
+                           StudentsService studentsService,
+                           @Lazy StudentClassesService studentClassesService) {
         this.paymentsRepo = paymentsRepo;
         this.stateService = stateService;
         this.appSettingsService = appSettingsService;
         this.studentsService = studentsService;
+        this.studentClassesService = studentClassesService;
     }
 
     public PageablePayload getAll(int page, String cdate, String name) {
@@ -92,8 +94,29 @@ public class PaymentsService {
                 list);
     }
 
-    public PaymentsPayload getById(UUID id) {
-        return null;
+    public PaymentsPayloadDetails getById(UUID id) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+        Payments payments = paymentsRepo.findById(id).orElse(null);
+        if (payments == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Incorrect Student Id");
+        }
+
+        Students student = payments.getStudents();
+
+        return new PaymentsPayloadDetails(
+                payments.getId(),
+                new ClassStudentsPayload(student.getId(),
+                        String.format("%s %s %s", student.getLastName(), student.getFirstName(), student.getSureName()),
+                        student.getMonthlyPayment()),
+                studentClassesService.getClassesInfo(student),
+                payments.getPaymentAmount(),
+                simpleDateFormat.format(payments.getPaymentDate()),
+                payments.getPaymentPurpose(),
+                payments.getPaymentType().ordinal()
+        );
     }
 
     @Transactional(rollbackFor = Throwable.class)

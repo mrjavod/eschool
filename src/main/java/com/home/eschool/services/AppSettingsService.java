@@ -1,7 +1,9 @@
 package com.home.eschool.services;
 
-import com.home.eschool.entity.AppSettings;
-import com.home.eschool.entity.Teachers;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.home.eschool.entity.*;
+import com.home.eschool.entity.addinfo.Parents;
 import com.home.eschool.entity.enums.SetsEnum;
 import com.home.eschool.models.dto.ExportDto;
 import com.home.eschool.models.payload.ExportPayload;
@@ -13,6 +15,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -32,11 +35,20 @@ public class AppSettingsService {
 
     private final AppSettingsRepo appSettingsRepo;
     private final TeachersService teachersService;
+    private final ClassesService classesService;
+    private final SubjectsService subjectsService;
+    private final StudentsService studentsService;
 
     public AppSettingsService(AppSettingsRepo appSettingsRepo,
-                              TeachersService teachersService) {
+                              TeachersService teachersService,
+                              ClassesService classesService,
+                              SubjectsService subjectsService,
+                              @Lazy StudentsService studentsService) {
         this.appSettingsRepo = appSettingsRepo;
         this.teachersService = teachersService;
+        this.classesService = classesService;
+        this.subjectsService = subjectsService;
+        this.studentsService = studentsService;
     }
 
     private List<StudyYearsPayload> getStudyYears() {
@@ -110,6 +122,27 @@ public class AppSettingsService {
                     fillTeachersRow(workbook, style, teachersService.getAllTeachers());
                     break;
                 }
+
+                case "classes": {
+
+                    fillClassesRow(workbook, style, classesService.getAllClasses());
+                    break;
+                }
+
+                case "subjects": {
+
+                    fillSubjectsRow(workbook, style, subjectsService.getAllSubjects());
+                    break;
+                }
+
+                case "students": {
+
+                    fillStudentsRow(workbook, style, studentsService.getAllStudents());
+                    break;
+                }
+
+                default:
+                    break;
             }
 
             workbook.write(outputStream);
@@ -163,6 +196,81 @@ public class AppSettingsService {
             setCellValue(row, style, 8, simpleDateFormat.format(teacher.getDateOfBirth()));
             setCellValue(row, style, 9, teacher.getPhoneNumber());
             setCellValue(row, style, 10, teacher.getEmail());
+        }
+    }
+
+    private void fillClassesRow(XSSFWorkbook workbook,
+                                CellStyle style,
+                                List<Classes> allClasses) {
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        int rowNumber = 0;
+
+        for (Classes t : allClasses) {
+
+            XSSFRow row = sheet.createRow(++rowNumber);
+
+            setCellValue(row, style, 0, t.getName());
+        }
+    }
+
+    private void fillSubjectsRow(XSSFWorkbook workbook,
+                                 CellStyle style,
+                                 List<Subjects> allSubjects) {
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        int rowNumber = 0;
+
+        for (Subjects t : allSubjects) {
+
+            XSSFRow row = sheet.createRow(++rowNumber);
+
+            setCellValue(row, style, 0, t.getName());
+        }
+    }
+
+    private void fillStudentsRow(XSSFWorkbook workbook,
+                                 CellStyle style,
+                                 List<Students> allStudents) {
+        XSSFSheet sheet = workbook.getSheetAt(0);
+        int rowNumber = 0;
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        ObjectMapper mapper = new ObjectMapper();
+
+        for (Students student : allStudents) {
+
+            XSSFRow row = sheet.createRow(++rowNumber);
+
+            setCellValue(row, style, 0, student.getLastName());
+            setCellValue(row, style, 1, student.getFirstName());
+            setCellValue(row, style, 2, student.getSureName());
+            setCellValue(row, style, 3, simpleDateFormat.format(student.getDateOfBirth()));
+            setCellValue(row, style, 4, student.getPhoneNumber());
+            setCellValue(row, style, 5, "");
+            setCellValue(row, style, 6, "");
+            setCellValue(row, style, 7, "");
+            setCellValue(row, style, 8, "");
+            setCellValue(row, style, 9, student.getMonthlyPayment() + "");
+            setCellValue(row, style, 10, studentsService.getStudentsPayload(student).getClasses().getName());
+
+            if (!Utils.isEmpty(student.getMother())) {
+                try {
+                    Parents mother = mapper.readValue(student.getMother(), Parents.class);
+                    setCellValue(row, style, 5, mother.getFio());
+                    setCellValue(row, style, 6, mother.getPhoneNumber());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (!Utils.isEmpty(student.getFather())) {
+                try {
+                    Parents father = mapper.readValue(student.getFather(), Parents.class);
+                    setCellValue(row, style, 7, father.getFio());
+                    setCellValue(row, style, 8, father.getPhoneNumber());
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

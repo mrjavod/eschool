@@ -2,7 +2,7 @@ package com.home.eschool.controller;
 
 import com.home.eschool.models.dto.PaymentsDto;
 import com.home.eschool.models.payload.PageablePayload;
-import com.home.eschool.models.payload.PaymentsPayload;
+import com.home.eschool.models.payload.PaymentsPayloadDetails;
 import com.home.eschool.models.payload.PaymentsStatsPayload;
 import com.home.eschool.services.PaymentsService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +36,7 @@ public class PaymentsController {
 
     @GetMapping("/getById/{id}")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public PaymentsPayload getById(@PathVariable("id") UUID id) {
+    public PaymentsPayloadDetails getById(@PathVariable("id") UUID id) {
         return paymentsService.getById(id);
     }
 
