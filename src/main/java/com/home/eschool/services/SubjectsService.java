@@ -40,6 +40,18 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
         this.stateService = stateService;
     }
 
+    private boolean setActive(Optional<Subjects> t) {
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.DELETED)) {
+            Subjects subject = t.get();
+            subject.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+            subject.setChangeUser(Settings.getCurrentUser());
+            subject.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
+            subjectsRepo.save(subject);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(List<SubjectsDto> subjects) {
@@ -48,10 +60,12 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
         for (SubjectsDto subjectsDto : subjects) {
-            if (subjectsRepo.findByName(subjectsDto.getName()).isPresent()) {
+
+            Optional<Subjects> t = subjectsRepo.findByName(subjectsDto.getName());
+            if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Bunday fan tizimda mavjud !");
-            }
+            } else if (setActive(t)) return;
 
             Subjects newClass = new Subjects();
             newClass.setId(UUID.randomUUID());
@@ -78,11 +92,12 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
                         HttpStatus.BAD_REQUEST, "Bunday fan topilmadi !");
             }
 
-            Optional<Subjects> optional = subjectsRepo.findByName(subjectsDto.getName());
-            if (optional.isPresent() && optional.get().getId() != subjectsDto.getId()) {
+            Optional<Subjects> t = subjectsRepo.findByName(subjectsDto.getName());
+            if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)
+                    && !t.get().getId().equals(subjectsDto.getId())) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Bunday fan tizimda mavjud !");
-            }
+            } else if (setActive(t)) return;
 
             newClass.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
             newClass.setChangeUser(Settings.getCurrentUser());
@@ -101,11 +116,13 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
                     HttpStatus.BAD_REQUEST, "Bunday fan topilmadi !");
         }
 
-        Optional<Subjects> optional = subjectsRepo.findByName(subject.getName());
-        if (optional.isPresent() && optional.get().getId() != subject.getId()) {
+        Optional<Subjects> t = subjectsRepo.findByName(subject.getName());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)
+                && !t.get().getId().equals(subject.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Bunday fan tizimda mavjud !");
-        }
+        } else if (setActive(t)) return;
+
         oldSubject.setName(subject.getName());
         oldSubject.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
         oldSubject.setChangeUser(Settings.getCurrentUser());

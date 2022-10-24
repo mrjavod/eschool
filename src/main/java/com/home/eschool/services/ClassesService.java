@@ -40,6 +40,18 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         this.stateService = stateService;
     }
 
+    private boolean setActive(Optional<Classes> t) {
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.DELETED)) {
+            Classes teacher = t.get();
+            teacher.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+            teacher.setChangeUser(Settings.getCurrentUser());
+            teacher.setState(stateService.getStateByLabel(StateEnum.ACTIVE));
+            classesRepo.save(teacher);
+            return true;
+        }
+        return false;
+    }
+
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void create(List<ClassesDto> classes) {
@@ -49,10 +61,12 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
 
         for (ClassesDto aClass : classes) {
 
-            if (classesRepo.findByName(aClass.getName()).isPresent()) {
+            Optional<Classes> t = classesRepo.findByName(aClass.getName());
+            if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Bunday sinf tizimda mavjud !");
-            }
+            } else if (setActive(t)) return;
+
             Classes newClass = new Classes();
             newClass.setId(UUID.randomUUID());
             newClass.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
@@ -70,7 +84,6 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
     @Transactional(rollbackFor = Throwable.class)
     public void update(List<ClassesDto> classes) {
         List<Classes> list = new ArrayList<>();
-
         for (ClassesDto aClass : classes) {
             Classes newClass = classesRepo.findById(aClass.getId()).orElse(null);
             if (newClass == null) {
@@ -78,8 +91,9 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
                         HttpStatus.BAD_REQUEST, "Bunday sinf topilmadi !");
             }
 
-            Optional<Classes> search = classesRepo.findByName(aClass.getName());
-            if (search.isPresent() && search.get().getId() != aClass.getId()) {
+            Optional<Classes> t = classesRepo.findByName(aClass.getName());
+            if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)
+                    && !t.get().getId().equals(aClass.getId())) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Bunday sinf tizimda mavjud !");
             }
@@ -101,8 +115,9 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
                     HttpStatus.BAD_REQUEST, "Bunday sinf topilmadi !");
         }
 
-        Optional<Classes> search = classesRepo.findByName(classes.getName());
-        if (search.isPresent() && search.get().getId() != classes.getId()) {
+        Optional<Classes> t = classesRepo.findByName(classes.getName());
+        if (t.isPresent() && t.get().getState().getLabel().equals(StateEnum.ACTIVE)
+                && !t.get().getId().equals(classes.getId())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Bunday sinf tizimda mavjud !");
         }
