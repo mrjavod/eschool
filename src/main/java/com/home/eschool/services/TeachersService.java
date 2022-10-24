@@ -4,12 +4,11 @@ import com.home.eschool.entity.States;
 import com.home.eschool.entity.Teachers;
 import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.TeachersDto;
-import com.home.eschool.models.payload.PageablePayload;
-import com.home.eschool.models.payload.TeachersPayload;
-import com.home.eschool.models.payload.TeachersPayloadDetails;
+import com.home.eschool.models.payload.*;
 import com.home.eschool.repository.TeachersRepo;
 import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,15 +35,18 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     private final UserService userService;
     private final FilesService filesService;
     private final StateService stateService;
+    private final TeachersSubjectsAndClassesService teachersSubjectsAndClassesService;
 
     public TeachersService(TeachersRepo teachersRepo,
                            UserService userService,
                            FilesService filesService,
-                           StateService stateService) {
+                           StateService stateService,
+                           @Lazy TeachersSubjectsAndClassesService teachersSubjectsAndClassesService) {
         this.teachersRepo = teachersRepo;
         this.userService = userService;
         this.filesService = filesService;
         this.stateService = stateService;
+        this.teachersSubjectsAndClassesService = teachersSubjectsAndClassesService;
     }
 
     @Override

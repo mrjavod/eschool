@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,4 +25,18 @@ public interface TeachersSubjectsAndClassesRepo extends JpaRepository<TeachersSu
                                                                        Subjects subjects,
                                                                        Classes classes,
                                                                        UUID studyYearId);
+
+    @Query("select t from TeachersSubjectsAndClasses t " +
+            "where t.teachers=?1 and t.states=?2 and t.studyYearId=?3")
+    List<TeachersSubjectsAndClasses> getTeachersClasses(Teachers teachers,
+                                                        States states,
+                                                        UUID studyYearId);
+
+    @Query("select t from TeachersSubjectsAndClasses t " +
+            "where t.teachers=?1 and t.states=?2 and t.studyYearId=?3 and t.classes=?4")
+    List<TeachersSubjectsAndClasses> getTeacherSubjectsByClass(Teachers teachers,
+                                                               States states,
+                                                               UUID studyYearId,
+                                                               Classes classes);
+
 }

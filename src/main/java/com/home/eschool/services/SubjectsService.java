@@ -126,10 +126,15 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
 
     @Override
     public void delete(List<UUID> subjects) {
+        States states = stateService.getStateByLabel(StateEnum.DELETED);
         subjects.forEach(s -> {
             Optional<Subjects> optional = subjectsRepo.findById(s);
             if (optional.isPresent()) {
-                subjectsRepo.deleteById(s);
+                Subjects t = optional.get();
+                t.setChangeUser(Settings.getCurrentUser());
+                t.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+                t.setState(states);
+                subjectsRepo.save(t);
             } else {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "Incorrect Subject Id");

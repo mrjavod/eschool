@@ -1,7 +1,9 @@
 package com.home.eschool.controller;
 
 import com.home.eschool.models.dto.TeachersSubjectsAndClassesDto;
+import com.home.eschool.models.payload.ClassesPayload;
 import com.home.eschool.models.payload.PageablePayload;
+import com.home.eschool.models.payload.SubjectsPayload;
 import com.home.eschool.models.payload.TeachersSubjectsAndClassesPayload;
 import com.home.eschool.services.TeachersSubjectsAndClassesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -59,5 +61,16 @@ public class TeachersSubjectsAndClassesController {
         teachersSubjectsAndClassesService.delete(uuids);
     }
 
+    @PostMapping("/getClasses")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    public List<ClassesPayload> getClasses() {
+        return teachersSubjectsAndClassesService.getTeacherClasses();
+    }
+
+    @PostMapping("/getSubjectsByClass/{id}")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    public List<SubjectsPayload> getSubjectsByClass(@PathVariable("id") UUID classId) {
+        return teachersSubjectsAndClassesService.getTeacherSubjectsByClass(classId);
+    }
 
 }

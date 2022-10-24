@@ -65,6 +65,4 @@ public class TeachersController {
     public int count() {
         return teachersService.getAllTeachers().size();
     }
-
-
 }

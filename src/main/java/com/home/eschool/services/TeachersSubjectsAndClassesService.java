@@ -163,4 +163,44 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
                         t.getTeachers().getPhoneNumber(),
                         t.getTeachers().getEmail()));
     }
+
+    public List<ClassesPayload> getTeacherClasses() {
+
+        List<ClassesPayload> list = new ArrayList<>();
+
+        UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+        Teachers teacher = teachersService.findById(Settings.getCurrentUser().getId());
+        if (teacher != null) {
+
+            teachersSubjectsAndClassesRepo.getTeachersClasses(teacher, states, studyYearId)
+                    .forEach(t -> list.add(
+                            new ClassesPayload(
+                                    t.getClasses().getId(),
+                                    t.getClasses().getName())));
+        }
+
+        return list;
+    }
+
+    public List<SubjectsPayload> getTeacherSubjectsByClass(UUID classId) {
+
+        List<SubjectsPayload> list = new ArrayList<>();
+
+        UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+        Teachers teacher = teachersService.findById(Settings.getCurrentUser().getId());
+        Classes classes = classesService.findById(classId);
+
+        if (teacher != null && classes != null) {
+
+            teachersSubjectsAndClassesRepo.getTeacherSubjectsByClass(
+                    teacher, states, studyYearId, classes).forEach(t -> list.add(
+                    new SubjectsPayload(
+                            t.getSubjects().getId(),
+                            t.getSubjects().getName())));
+        }
+
+        return list;
+    }
 }
