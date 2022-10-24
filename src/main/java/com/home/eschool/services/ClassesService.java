@@ -69,7 +69,6 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void update(List<ClassesDto> classes) {
-
         List<Classes> list = new ArrayList<>();
 
         for (ClassesDto aClass : classes) {
@@ -167,11 +166,11 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         });
     }
 
-    public Classes findById(UUID id) {
+    Classes findById(UUID id) {
         return classesRepo.findById(id).orElse(null);
     }
 
-    public List<Classes> getAllClasses() {
+    List<Classes> getAllClasses() {
         return classesRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
 
