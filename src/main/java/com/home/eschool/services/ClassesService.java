@@ -67,6 +67,7 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public void update(List<ClassesDto> classes) {
 
         List<Classes> list = new ArrayList<>();
@@ -93,16 +94,23 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         classesRepo.saveAll(list);
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void updateOnlyOne(ClassesDto classes) {
         Classes oldSubject = classesRepo.findById(classes.getId()).orElse(null);
         if (oldSubject == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                    HttpStatus.BAD_REQUEST, "Bunday sinf topilmadi !");
         }
+
+        Optional<Classes> search = classesRepo.findByName(classes.getName());
+        if (search.isPresent() && search.get().getId() != classes.getId()) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Bunday sinf tizimda mavjud !");
+        }
+
         oldSubject.setName(classes.getName());
         oldSubject.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
         oldSubject.setChangeUser(Settings.getCurrentUser());
-
         classesRepo.save(oldSubject);
     }
 
@@ -111,8 +119,10 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         int size = 10;
         List<ClassesPayload> list = new ArrayList<>();
 
-        Page<Classes> classesPage = classesRepo.findAllByNameContains(
-                PageRequest.of(page, size, Sort.by("name")), search);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
+
+        Page<Classes> classesPage = classesRepo.list(
+                PageRequest.of(page, size, Sort.by("name")), states, search);
 
         classesPage.forEach(t -> list.add(
                 new ClassesPayload(
@@ -132,13 +142,14 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
 
         if (subjects == null) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                    HttpStatus.BAD_REQUEST, "Bunday sinf topilmadi !");
         }
 
         return new ClassesPayload(subjects.getId(), subjects.getName());
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public void delete(List<UUID> classes) {
         States states = stateService.getStateByLabel(StateEnum.DELETED);
         classes.forEach(s -> {
@@ -151,7 +162,7 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
                 classesRepo.save(t);
             } else {
                 throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Incorrect Subject Id");
+                        HttpStatus.BAD_REQUEST, "Bunday sinf topilmadi !");
             }
         });
     }
