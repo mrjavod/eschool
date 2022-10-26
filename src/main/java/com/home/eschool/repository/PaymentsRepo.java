@@ -55,7 +55,7 @@ public interface PaymentsRepo extends JpaRepository<Payments, UUID> {
 
     @Query(nativeQuery = true,
             value = "select sum(p.payment_amount), date_part('month', p.payment_date) as month from payments p \n" +
-                    "where p.study_year_id = ?1\n" +
+                    "where p.study_year_id = ?1 and p.state_id = ?2\n" +
                     "group by date_part('month', p.payment_date)\n")
-    List<MonthlyPayments> getStatsByStudyYear(UUID studyYearId);
+    List<MonthlyPayments> getStatsByStudyYear(UUID studyYearId, UUID state);
 }

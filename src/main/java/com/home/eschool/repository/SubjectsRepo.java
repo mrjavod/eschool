@@ -20,8 +20,8 @@ public interface SubjectsRepo extends JpaRepository<Subjects, UUID> {
 
     Page<Subjects> findAllByNameContains(Pageable pageable, String name);
 
-    @Query("select t from Subjects t where t.state = ?1 and t.name = ?2")
-    Page<Subjects> list(Pageable pageable, States state, String search);
+    @Query("select t from Subjects t where t.state = ?1")
+    Page<Subjects> list(Pageable pageable, States state);
 
     List<Subjects> findAllByStateLabel(StateEnum stateEnum);
 }

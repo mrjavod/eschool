@@ -136,7 +136,7 @@ public class ClassesService implements CrudInterface<List<ClassesDto>, ClassesPa
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
         Page<Classes> classesPage = classesRepo.list(
-                PageRequest.of(page, size, Sort.by("name")), states, search);
+                PageRequest.of(page, size, Sort.by("name")), states);
 
         classesPage.forEach(t -> list.add(
                 new ClassesPayload(

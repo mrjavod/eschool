@@ -157,9 +157,10 @@ public class PaymentsService {
 
     public PaymentsStatsPayload getStats() {
         UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
+        States states = stateService.getStateByLabel(StateEnum.ACTIVE);
         return new PaymentsStatsPayload(
                 appSettingsService.getStudyYearsById(studyYearId),
-                paymentsRepo.getStatsByStudyYear(studyYearId)
+                paymentsRepo.getStatsByStudyYear(studyYearId, states.getId())
         );
     }
 }

@@ -137,7 +137,7 @@ public class SubjectsService implements CrudInterface<List<SubjectsDto>, Subject
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
 
         Page<Subjects> subjectsPage = subjectsRepo.list(
-                PageRequest.of(page, size, Sort.by("name")), states, search);
+                PageRequest.of(page, size, Sort.by("name")), states);
 
         subjectsPage.forEach(t -> list.add(
                 new SubjectsPayload(

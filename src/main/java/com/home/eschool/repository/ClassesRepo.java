@@ -16,8 +16,8 @@ import java.util.UUID;
 @Repository
 public interface ClassesRepo extends JpaRepository<Classes, UUID> {
 
-    @Query("select t from Classes t where t.state = ?1 and t.name = ?2")
-    Page<Classes> list(Pageable pageable, States state, String search);
+    @Query("select t from Classes t where t.state = ?1")
+    Page<Classes> list(Pageable pageable, States state);
 
     Page<Classes> findAllByNameContains(Pageable pageable, String search);
 
