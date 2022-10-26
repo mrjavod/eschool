@@ -34,7 +34,7 @@ public class DataLoader implements CommandLineRunner {
     private String status;
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         if (status.equalsIgnoreCase("create")) {
             List<Roles> roles = roleService.generateRoles();
