@@ -19,10 +19,14 @@ public class StateService {
     }
 
     public List<States> generateDefaultStates() {
-        List<States> list = new ArrayList<>();
-        list.add(new States(UUID.randomUUID(), "Deleted", StateEnum.DELETED));
-        list.add(new States(UUID.randomUUID(), "Active", StateEnum.ACTIVE));
-        return stateRepo.saveAll(list);
+        if (stateRepo.count() == 0) {
+            List<States> list = new ArrayList<>();
+            list.add(new States(UUID.randomUUID(), "Deleted", StateEnum.DELETED));
+            list.add(new States(UUID.randomUUID(), "Active", StateEnum.ACTIVE));
+
+            return stateRepo.saveAll(list);
+        }
+        return new ArrayList<>();
     }
 
     public List<States> getStatesList() {

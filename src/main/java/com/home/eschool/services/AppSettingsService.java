@@ -90,19 +90,22 @@ public class AppSettingsService {
 
     public void createDefaultSettings() {
 
-        AppSettings appSettings = new AppSettings();
-        appSettings.setId(UUID.randomUUID());
-        appSettings.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
-        appSettings.setLabel(SetsEnum.STUDY_YEAR);
-        appSettings.setName("O'quv yili");
+        if (appSettingsRepo.count() == 0) {
 
-        StudyYearsPayload studyYearsPayload = getStudyYearsByName("2022-2023");
-        if (studyYearsPayload != null) {
-            appSettings.setKey(studyYearsPayload.getId());
-            appSettings.setValue(studyYearsPayload.getName());
+            AppSettings appSettings = new AppSettings();
+            appSettings.setId(UUID.randomUUID());
+            appSettings.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+            appSettings.setLabel(SetsEnum.STUDY_YEAR);
+            appSettings.setName("O'quv yili");
+
+            StudyYearsPayload studyYearsPayload = getStudyYearsByName("2022-2023");
+            if (studyYearsPayload != null) {
+                appSettings.setKey(studyYearsPayload.getId());
+                appSettings.setValue(studyYearsPayload.getName());
+            }
+
+            appSettingsRepo.save(appSettings);
         }
-
-        appSettingsRepo.save(appSettings);
     }
 
     public ExportPayload export(ExportDto dto) {

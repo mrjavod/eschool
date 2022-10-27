@@ -131,7 +131,7 @@ public class PaymentsService {
         payments.setPaymentDate(Timestamp.valueOf(LocalDateTime.now()));
         payments.setPaymentAmount(paymentsDto.getPaymentAmount());
         payments.setPaymentPurpose(paymentsDto.getPaymentPurpose());
-        payments.setPaymentType(paymentsDto.getPaymentType() == 0 ? PaymentTypeEnum.CASH : PaymentTypeEnum.CASH);
+        payments.setPaymentType(paymentsDto.getPaymentType() == 0 ? PaymentTypeEnum.CASH : PaymentTypeEnum.CARD);
 
         paymentsRepo.save(payments);
     }

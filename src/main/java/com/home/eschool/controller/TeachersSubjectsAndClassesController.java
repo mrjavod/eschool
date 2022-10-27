@@ -61,13 +61,13 @@ public class TeachersSubjectsAndClassesController {
         teachersSubjectsAndClassesService.delete(uuids);
     }
 
-    @PostMapping("/getClasses")
+    @GetMapping("/getClasses")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public List<ClassesPayload> getClasses() {
         return teachersSubjectsAndClassesService.getTeacherClasses();
     }
 
-    @PostMapping("/getSubjectsByClass/{id}")
+    @GetMapping("/getSubjectsByClass/{id}")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     public List<SubjectsPayload> getSubjectsByClass(@PathVariable("id") UUID classId) {
         return teachersSubjectsAndClassesService.getTeacherSubjectsByClass(classId);

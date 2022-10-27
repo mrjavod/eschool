@@ -38,24 +38,26 @@ public class UserService {
      */
     public void createDefaultUser(List<Roles> roles, List<States> states) {
 
-        Roles role = roles.stream().filter(e -> e.getLabel().equals(RoleEnum.ROLE_ADMIN))
-                .findFirst().orElse(null);
+        if (userRepo.count() == 0) {
+            Roles role = roles.stream().filter(e -> e.getLabel().equals(RoleEnum.ROLE_ADMIN))
+                    .findFirst().orElse(null);
 
-        States state = states.stream().filter(e -> e.getLabel().equals(StateEnum.ACTIVE))
-                .findFirst().orElse(null);
+            States state = states.stream().filter(e -> e.getLabel().equals(StateEnum.ACTIVE))
+                    .findFirst().orElse(null);
 
-        Users user = new Users();
-        user.setId(UUID.randomUUID());
-        user.setLogin("admin");
-        user.setPassword(new BCryptPasswordEncoder().encode("admin"));
-        user.setFullName("Adminov Admin");
-        user.setRole(role);
-        user.setCreateUser(null);
-        user.setChangeUser(null);
-        user.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
-        user.setState(state);
+            Users user = new Users();
+            user.setId(UUID.randomUUID());
+            user.setLogin("admin");
+            user.setPassword(new BCryptPasswordEncoder().encode("admin"));
+            user.setFullName("Adminov Admin");
+            user.setRole(role);
+            user.setCreateUser(null);
+            user.setChangeUser(null);
+            user.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+            user.setState(state);
 
-        this.userRepo.save(user);
+            this.userRepo.save(user);
+        }
     }
 
     /**

@@ -19,12 +19,14 @@ public class LanguageService {
     }
 
     public void generateLanguages() {
-        List<Languages> list = new ArrayList<>();
-        list.add(new Languages(UUID.randomUUID(), "Eng", LangEnum.EN));
-        list.add(new Languages(UUID.randomUUID(), "Rus", LangEnum.RU));
-        list.add(new Languages(UUID.randomUUID(), "Uzb", LangEnum.UZ));
+        if (languagesRepo.count() == 0) {
+            List<Languages> list = new ArrayList<>();
+            list.add(new Languages(UUID.randomUUID(), "Eng", LangEnum.EN));
+            list.add(new Languages(UUID.randomUUID(), "Rus", LangEnum.RU));
+            list.add(new Languages(UUID.randomUUID(), "Uzb", LangEnum.UZ));
 
-        languagesRepo.saveAll(list);
+            languagesRepo.saveAll(list);
+        }
     }
 
     public List<Languages> getLanguageList() {

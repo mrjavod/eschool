@@ -92,11 +92,12 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public void delete(List<UUID> ids) {
+        States states = stateService.getStateByLabel(StateEnum.DELETED);
         ids.forEach(s -> {
             Optional<TeachersSubjectsAndClasses> optional = teachersSubjectsAndClassesRepo.findById(s);
             if (optional.isPresent()) {
                 TeachersSubjectsAndClasses data = optional.get();
-                data.setStates(stateService.getStateByLabel(StateEnum.DELETED));
+                data.setStates(states);
                 data.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
                 data.setChangeUser(Settings.getCurrentUser());
 

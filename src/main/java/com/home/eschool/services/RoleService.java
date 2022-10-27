@@ -19,11 +19,14 @@ public class RoleService {
     }
 
     public List<Roles> generateRoles() {
-        List<Roles> list = new ArrayList<>();
-        list.add(new Roles(UUID.randomUUID(), "Administrator", RoleEnum.ROLE_ADMIN));
-        list.add(new Roles(UUID.randomUUID(), "Teacher", RoleEnum.ROLE_TEACHER));
+        if (roleRepo.count() == 0) {
+            List<Roles> list = new ArrayList<>();
+            list.add(new Roles(UUID.randomUUID(), "Administrator", RoleEnum.ROLE_ADMIN));
+            list.add(new Roles(UUID.randomUUID(), "Teacher", RoleEnum.ROLE_TEACHER));
 
-        return roleRepo.saveAll(list);
+            return roleRepo.saveAll(list);
+        }
+        return new ArrayList<>();
     }
 
     public List<Roles> getRolesList() {
