@@ -279,4 +279,12 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     public List<Teachers> getAllTeachers() {
         return teachersRepo.findAllByStateLabel(StateEnum.ACTIVE);
     }
+
+    public Teachers findByUserId(UUID userId) {
+        if (userId == null) {
+            return null;
+        }
+
+        return teachersRepo.findByProfileId(userId).orElse(null);
+    }
 }

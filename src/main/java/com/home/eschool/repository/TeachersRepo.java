@@ -27,4 +27,6 @@ public interface TeachersRepo extends JpaRepository<Teachers, UUID> {
 
     Optional<Teachers> findByPhoneNumber(String phoneNumber);
 
+    Optional<Teachers> findByProfileId(UUID userId);
+
 }

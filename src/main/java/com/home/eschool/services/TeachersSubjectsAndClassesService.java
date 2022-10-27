@@ -171,7 +171,8 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
 
         UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
-        Teachers teacher = teachersService.findById(Settings.getCurrentUser().getId());
+        Teachers teacher = teachersService.findByUserId(Settings.getCurrentUser().getId());
+
         if (teacher != null) {
 
             teachersSubjectsAndClassesRepo.getTeachersClasses(teacher, states, studyYearId)
@@ -190,7 +191,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
 
         UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
-        Teachers teacher = teachersService.findById(Settings.getCurrentUser().getId());
+        Teachers teacher = teachersService.findByUserId(Settings.getCurrentUser().getId());
         Classes classes = classesService.findById(classId);
 
         if (teacher != null && classes != null) {
