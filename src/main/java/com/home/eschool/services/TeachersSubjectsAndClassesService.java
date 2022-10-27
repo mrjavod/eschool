@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class TeachersSubjectsAndClassesService implements CrudInterface<TeachersSubjectsAndClassesDto, TeachersSubjectsAndClassesPayload> {
@@ -182,7 +183,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
                                     t.getClasses().getName())));
         }
 
-        return list;
+        return list.stream().distinct().collect(Collectors.toList());
     }
 
     public List<SubjectsPayload> getTeacherSubjectsByClass(UUID classId) {

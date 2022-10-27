@@ -27,7 +27,8 @@ public interface TeachersSubjectsAndClassesRepo extends JpaRepository<TeachersSu
                                                                        UUID studyYearId);
 
     @Query("select t from TeachersSubjectsAndClasses t " +
-            "where t.teachers=?1 and t.states=?2 and t.studyYearId=?3")
+            "where t.teachers=?1 and t.states=?2 and t.studyYearId=?3 \n" +
+            "order by t.classes")
     List<TeachersSubjectsAndClasses> getTeachersClasses(Teachers teachers,
                                                         States states,
                                                         UUID studyYearId);
