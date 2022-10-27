@@ -7,8 +7,10 @@ import com.home.eschool.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -37,15 +39,8 @@ public class AttendanceController {
         attendanceService.create(dto);
     }
 
-    @GetMapping("/getById/{id}")
-    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public Object getById(@PathVariable("id") UUID id) {
-        return attendanceService.getById(id);
-    }
-
     @PostMapping("/delete")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @Secured("ROLE_ADMIN")
     public void delete(@RequestBody List<UUID> uuids) {
         attendanceService.delete(uuids);
     }

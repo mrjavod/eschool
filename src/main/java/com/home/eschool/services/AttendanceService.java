@@ -6,12 +6,19 @@ import com.home.eschool.models.dto.AttendanceListDto;
 import com.home.eschool.models.payload.AttendanceListPayload;
 import com.home.eschool.models.payload.ReferencePayload;
 import com.home.eschool.repository.AttendanceRepo;
+import com.home.eschool.utils.Settings;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -19,11 +26,20 @@ public class AttendanceService {
 
     private final AttendanceRepo attendanceRepo;
     private final StudentClassesService studentClassesService;
+    private final StudentsService studentsService;
+    private final SubjectsService subjectsService;
+    private final ClassesService classesService;
 
     public AttendanceService(AttendanceRepo attendanceRepo,
-                             StudentClassesService studentClassesService) {
+                             StudentClassesService studentClassesService,
+                             StudentsService studentsService,
+                             SubjectsService subjectsService,
+                             ClassesService classesService) {
         this.attendanceRepo = attendanceRepo;
         this.studentClassesService = studentClassesService;
+        this.studentsService = studentsService;
+        this.subjectsService = subjectsService;
+        this.classesService = classesService;
     }
 
     public List<AttendanceListPayload> list(AttendanceListDto dto) {
@@ -62,13 +78,32 @@ public class AttendanceService {
         return list;
     }
 
+    @Transactional(rollbackFor = Throwable.class)
     public void create(AttendanceDto dto) {
+
+        Attendance attendance = new Attendance();
+        attendance.setId(UUID.randomUUID());
+        attendance.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+        attendance.setCreateUser(Settings.getCurrentUser());
+        attendance.setAttendanceDate(Date.valueOf(dto.getAttendanceDate()));
+        attendance.setAttendanceIsReasonable(dto.isAttendanceIsReasonable());
+        attendance.setAttendanceReason(dto.getAttendanceReason());
+        attendance.setClasses(classesService.findById(dto.getClassId()));
+        attendance.setStudents(studentsService.getStudentById(dto.getStudentId()));
+        attendance.setSubjects(subjectsService.findById(dto.getSubjectId()));
+        attendanceRepo.save(attendance);
     }
 
-    public Object getById(UUID id) {
-        return null;
-    }
-
+    @Transactional(rollbackFor = Throwable.class)
     public void delete(List<UUID> uuids) {
+        uuids.forEach(s -> {
+            Optional<Attendance> optional = attendanceRepo.findById(s);
+            if (optional.isPresent()) {
+                attendanceRepo.delete(optional.get());
+            } else {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "Noto'g'ri ID yuborildi !");
+            }
+        });
     }
 }

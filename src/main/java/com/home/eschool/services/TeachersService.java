@@ -4,7 +4,9 @@ import com.home.eschool.entity.States;
 import com.home.eschool.entity.Teachers;
 import com.home.eschool.entity.enums.StateEnum;
 import com.home.eschool.models.dto.TeachersDto;
-import com.home.eschool.models.payload.*;
+import com.home.eschool.models.payload.PageablePayload;
+import com.home.eschool.models.payload.TeachersPayload;
+import com.home.eschool.models.payload.TeachersPayloadDetails;
 import com.home.eschool.repository.TeachersRepo;
 import com.home.eschool.services.interfaces.CrudInterface;
 import com.home.eschool.utils.Settings;
@@ -35,7 +37,6 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
     private final UserService userService;
     private final FilesService filesService;
     private final StateService stateService;
-    private final TeachersSubjectsAndClassesService teachersSubjectsAndClassesService;
 
     public TeachersService(TeachersRepo teachersRepo,
                            UserService userService,
@@ -46,7 +47,6 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         this.userService = userService;
         this.filesService = filesService;
         this.stateService = stateService;
-        this.teachersSubjectsAndClassesService = teachersSubjectsAndClassesService;
     }
 
     @Override
@@ -268,7 +268,11 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         });
     }
 
-    public Teachers findById(UUID teacherId) {
+    public List<Teachers> getAllTeachers() {
+        return teachersRepo.findAllByStateLabel(StateEnum.ACTIVE);
+    }
+
+    Teachers findById(UUID teacherId) {
         if (teacherId == null) {
             return null;
         }
@@ -276,15 +280,19 @@ public class TeachersService implements CrudInterface<TeachersDto, TeachersPaylo
         return teachersRepo.findById(teacherId).orElse(null);
     }
 
-    public List<Teachers> getAllTeachers() {
-        return teachersRepo.findAllByStateLabel(StateEnum.ACTIVE);
-    }
-
-    public Teachers findByUserId(UUID userId) {
+    Teachers findByUserId(UUID userId) {
         if (userId == null) {
             return null;
         }
 
         return teachersRepo.findByProfileId(userId).orElse(null);
+    }
+
+    public TeachersPayloadDetails getProfile() {
+        Teachers teacher = findByUserId(Settings.getCurrentUser().getId());
+        if (teacher == null) {
+            return null;
+        }
+        return getById(teacher.getId());
     }
 }

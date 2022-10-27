@@ -65,4 +65,11 @@ public class TeachersController {
     public int count() {
         return teachersService.getAllTeachers().size();
     }
+
+    @GetMapping("/profile")
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @Secured("ROLE_TEACHER")
+    public TeachersPayloadDetails getProfile() {
+        return teachersService.getProfile();
+    }
 }
