@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Getter
@@ -14,15 +13,15 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AttendanceListPayload {
 
-    private ReferencePayload students;
+    private ReferencePayload student;
     private boolean attendanceStatus;
     private UUID attendanceId;
     private String attendanceDate;
     private boolean attendanceIsReasonable;
     private String attendanceReason;
 
-    public AttendanceListPayload(ReferencePayload students, boolean attendanceStatus) {
-        this.students = students;
+    public AttendanceListPayload(ReferencePayload student, boolean attendanceStatus) {
+        this.student = student;
         this.attendanceStatus = attendanceStatus;
     }
 }
