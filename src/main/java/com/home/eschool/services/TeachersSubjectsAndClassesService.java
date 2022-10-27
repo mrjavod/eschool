@@ -183,7 +183,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
                                     t.getClasses().getName())));
         }
 
-        return list.stream().distinct().collect(Collectors.toList());
+        return list;
     }
 
     public List<SubjectsPayload> getTeacherSubjectsByClass(UUID classId) {
