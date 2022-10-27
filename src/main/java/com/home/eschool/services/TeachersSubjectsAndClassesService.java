@@ -18,7 +18,10 @@ import org.springframework.web.server.ResponseStatusException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -165,7 +168,7 @@ public class TeachersSubjectsAndClassesService implements CrudInterface<Teachers
 
     public List<ClassesPayload> getTeacherClasses() {
 
-        Set<ClassesPayload> list = new HashSet<>();
+        ArrayList<ClassesPayload> list = new ArrayList<>();
 
         UUID studyYearId = appSettingsService.getKeyByLabel(SetsEnum.STUDY_YEAR);
         States states = stateService.getStateByLabel(StateEnum.ACTIVE);
