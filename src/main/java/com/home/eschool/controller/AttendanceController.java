@@ -2,6 +2,7 @@ package com.home.eschool.controller;
 
 import com.home.eschool.models.dto.AttendanceDto;
 import com.home.eschool.models.dto.AttendanceListDto;
+import com.home.eschool.models.payload.AttendanceListPayload;
 import com.home.eschool.services.AttendanceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -26,7 +27,7 @@ public class AttendanceController {
 
     @PostMapping("/")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public Object list(@Valid @RequestBody AttendanceListDto dto) {
+    public List<AttendanceListPayload> list(@Valid @RequestBody AttendanceListDto dto) {
         return attendanceService.list(dto);
     }
 
