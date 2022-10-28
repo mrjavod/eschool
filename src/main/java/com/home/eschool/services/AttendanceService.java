@@ -79,18 +79,30 @@ public class AttendanceService {
     }
 
     @Transactional(rollbackFor = Throwable.class)
-    public void create(AttendanceDto dto) {
+    public void save(AttendanceDto dto) {
 
-        Attendance attendance = new Attendance();
-        attendance.setId(UUID.randomUUID());
-        attendance.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
-        attendance.setCreateUser(Settings.getCurrentUser());
-        attendance.setAttendanceDate(Date.valueOf(dto.getAttendanceDate()));
-        attendance.setAttendanceIsReasonable(dto.isAttendanceIsReasonable());
-        attendance.setAttendanceReason(dto.getAttendanceReason());
-        attendance.setClasses(classesService.findById(dto.getClassId()));
-        attendance.setStudents(studentsService.getStudentById(dto.getStudentId()));
-        attendance.setSubjects(subjectsService.findById(dto.getSubjectId()));
+        Attendance attendance = attendanceRepo.getAttendance(dto.getClassId(),
+                dto.getSubjectId(), dto.getStudentId(), Date.valueOf(dto.getAttendanceDate()));
+
+        if (attendance == null) {
+            attendance = new Attendance();
+            attendance.setId(UUID.randomUUID());
+            attendance.setCreateDate(Timestamp.valueOf(LocalDateTime.now()));
+            attendance.setCreateUser(Settings.getCurrentUser());
+            attendance.setAttendanceDate(Date.valueOf(dto.getAttendanceDate()));
+            attendance.setAttendanceIsReasonable(dto.isAttendanceIsReasonable());
+            attendance.setAttendanceReason(dto.getAttendanceReason());
+            attendance.setClasses(classesService.findById(dto.getClassId()));
+            attendance.setStudents(studentsService.getStudentById(dto.getStudentId()));
+            attendance.setSubjects(subjectsService.findById(dto.getSubjectId()));
+        } else {
+            attendance.setId(UUID.randomUUID());
+            attendance.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
+            attendance.setChangeUser(Settings.getCurrentUser());
+            attendance.setAttendanceIsReasonable(dto.isAttendanceIsReasonable());
+            attendance.setAttendanceReason(dto.getAttendanceReason());
+        }
+
         attendanceRepo.save(attendance);
     }
 

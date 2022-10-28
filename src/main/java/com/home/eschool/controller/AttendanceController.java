@@ -33,10 +33,10 @@ public class AttendanceController {
         return attendanceService.list(dto);
     }
 
-    @PostMapping("/create")
+    @PostMapping("/save")
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    public void create(@Valid @RequestBody AttendanceDto dto) {
-        attendanceService.create(dto);
+    public void save(@Valid @RequestBody AttendanceDto dto) {
+        attendanceService.save(dto);
     }
 
     @PostMapping("/delete")

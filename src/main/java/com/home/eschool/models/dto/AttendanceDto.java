@@ -14,8 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class AttendanceDto {
 
-    private UUID id;
-
     @NotNull
     private UUID classId;
     @NotNull
