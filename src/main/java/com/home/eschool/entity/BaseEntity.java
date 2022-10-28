@@ -20,7 +20,7 @@ class BaseEntity {
     private Timestamp createDate;
     private Timestamp changeDate;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     private Users createUser;
 
     @OneToOne
