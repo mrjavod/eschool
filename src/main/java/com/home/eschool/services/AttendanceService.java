@@ -96,7 +96,6 @@ public class AttendanceService {
             attendance.setStudents(studentsService.getStudentById(dto.getStudentId()));
             attendance.setSubjects(subjectsService.findById(dto.getSubjectId()));
         } else {
-            attendance.setId(UUID.randomUUID());
             attendance.setChangeDate(Timestamp.valueOf(LocalDateTime.now()));
             attendance.setChangeUser(Settings.getCurrentUser());
             attendance.setAttendanceIsReasonable(dto.isAttendanceIsReasonable());
