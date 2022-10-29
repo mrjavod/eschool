@@ -126,9 +126,7 @@ public class UserService {
 
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-        String oldPassword = passwordEncoder.encode(dto.getOldPassword());
-
-        if (!user.getPassword().equals(oldPassword)) {
+        if (!passwordEncoder.matches(dto.getOldPassword(), user.getPassword())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Eski parol noto'g'ri kiritilgan !");
         }
