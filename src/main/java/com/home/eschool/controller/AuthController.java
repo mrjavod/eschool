@@ -2,6 +2,7 @@ package com.home.eschool.controller;
 
 import com.home.eschool.entity.Users;
 import com.home.eschool.models.dto.LoginDto;
+import com.home.eschool.models.dto.PasswordUpdateDto;
 import com.home.eschool.models.payload.LoginPayload;
 import com.home.eschool.models.payload.UserPayload;
 import com.home.eschool.security.jwt.JwtTokenProvider;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -57,5 +60,11 @@ public class AuthController {
         } catch (AuthenticationException e) {
             return ResponseEntity.status(401).build();
         }
+    }
+
+
+    @PostMapping("/updatePassword")
+    public void updatePassword(@Valid @RequestBody PasswordUpdateDto dto){
+        userService.updatePassword(dto);
     }
 }

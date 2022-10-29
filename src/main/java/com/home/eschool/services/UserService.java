@@ -6,10 +6,13 @@ import com.home.eschool.entity.Teachers;
 import com.home.eschool.entity.Users;
 import com.home.eschool.entity.enums.RoleEnum;
 import com.home.eschool.entity.enums.StateEnum;
+import com.home.eschool.models.dto.PasswordUpdateDto;
 import com.home.eschool.repository.UserRepo;
 import com.home.eschool.utils.Settings;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -115,5 +118,27 @@ public class UserService {
     void deleteUser(Users profile) {
         profile.setState(stateService.getStateByLabel(StateEnum.DELETED));
         userRepo.save(profile);
+    }
+
+    public void updatePassword(PasswordUpdateDto dto) {
+
+        Users user = Settings.getCurrentUser();
+
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+        String oldPassword = passwordEncoder.encode(dto.getOldPassword());
+
+        if (!user.getPassword().equals(oldPassword)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Eski parol noto'g'ri kiritilgan !");
+        }
+
+        if (!dto.getNewPassword().equals(dto.getConfirm())) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Parol tasdiqlanmadi !");
+        }
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepo.save(user);
     }
 }
